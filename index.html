@@ -455,12 +455,13 @@ async function fetchSheet() {
   state.syncError = '';
   render();
 
-  // Try Apps Script first (if configured), then published CSV
+  // Try Apps Script first (freshest data), then published CSV
   const urls = [];
 
   // 1. Apps Script Web App (supports read+write)
-  if (config.webhookUrl) {
-    urls.push({ url: config.webhookUrl + '?action=read', type: 'appsscript' });
+  const scriptUrl = config.webhookUrl || APPS_SCRIPT_URL;
+  if (scriptUrl) {
+    urls.push({ url: scriptUrl + '?action=read', type: 'appsscript' });
   }
 
   // 2. Published CSV
@@ -536,24 +537,23 @@ async function fetchSheet() {
   return false;
 }
 
-// ============ WRITE BACK ============
-async function updateTaskInSheet(id, field, value) {
-  if (!config) return;
+// ============ WRITE BACK VIA GOOGLE APPS SCRIPT ============
+const APPS_SCRIPT_URL = 'https://script.google.com/macros/s/AKfycbyWJAMFakbdfSa6XSh4GOU6Yhn96Ycqat34Tz8uOtKvw-gQBxMpTygXoiOWV7UmkrDrZg/exec';
 
-  // Try Apps Script Web App
-  if (config.webhookUrl) {
-    try {
-      const payload = { action: 'update', id };
-      payload[field] = value;
-      await fetch(config.webhookUrl, {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify(payload)
-      });
-      return;
-    } catch (e) {
-      console.warn('Apps Script write failed:', e);
-    }
+async function updateTaskInSheet(id, field, value) {
+  const url = config?.webhookUrl || APPS_SCRIPT_URL;
+  if (!url) return;
+  try {
+    // Use POST with text/plain Content-Type to avoid CORS preflight
+    // Apps Script doPost receives the JSON string in e.postData.contents
+    await fetch(url, {
+      method: 'POST',
+      headers: { 'Content-Type': 'text/plain;charset=utf-8' },
+      body: JSON.stringify({ action: 'toggle', id, [field]: value }),
+      mode: 'no-cors'
+    });
+  } catch (e) {
+    console.warn('Write failed:', e);
   }
 }
 
