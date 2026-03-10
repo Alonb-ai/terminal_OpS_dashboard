@@ -88,6 +88,7 @@ const CACHE_KEY = 'manager-sheet-cache';
 // ===== HARDCODED SHEET CONFIG =====
 const DEFAULT_SHEET_ID = '16xVG6xHsrilXv5I1n-jPS49ka5Dz9Cr1f1e8PDZB2SA';
 const DEFAULT_GID = '1985634719';
+const DEFAULT_PUB_KEY = '2PACX-1vTV8NzgFdxt_mjW1MzZMVCX0CHuKkjYwQsc6j8IswgO2l8K_nAYUkzDPtMIOdHZEQxZkxiHoM7cK3gU';
 
 const CAT_COLORS = {
   'מיידי':'#ef4444','באגים':'#f97316',"פיצ'רים עמר":'#8b5cf6',
@@ -102,11 +103,15 @@ function loadConfig() {
   try { config = JSON.parse(localStorage.getItem(CFG_KEY)); } catch {}
   // Auto-set defaults if no config
   if (!config || !config.sheetId) {
-    config = { sheetId: DEFAULT_SHEET_ID, gid: DEFAULT_GID, sheetName: '', webhookUrl: '' };
+    config = { sheetId: DEFAULT_SHEET_ID, gid: DEFAULT_GID, pubKey: DEFAULT_PUB_KEY, sheetName: '', webhookUrl: '' };
     saveConfig();
   }
-  // Ensure gid exists on old configs
-  if (!config.gid) { config.gid = DEFAULT_GID; saveConfig(); }
+  // Ensure gid and pubKey exist on old configs
+  if (!config.gid || !config.pubKey) {
+    config.gid = config.gid || DEFAULT_GID;
+    config.pubKey = config.pubKey || DEFAULT_PUB_KEY;
+    saveConfig();
+  }
 }
 function saveConfig() {
   try { localStorage.setItem(CFG_KEY, JSON.stringify(config)); } catch {}
@@ -173,11 +178,17 @@ async function fetchSheet() {
   state.syncError = '';
   render();
 
-  // Try multiple URL formats
+  // Try multiple URL formats — published URL first (most reliable for CORS)
+  const pubKey = config.pubKey || DEFAULT_PUB_KEY;
+  const gid = config.gid || DEFAULT_GID;
   const urls = [];
+  // 1. Published CSV (best — no auth needed, CORS friendly)
+  if (pubKey) {
+    urls.push(`https://docs.google.com/spreadsheets/d/e/${pubKey}/pub?gid=${gid}&single=true&output=csv`);
+  }
+  // 2. gviz fallback
   if (config.gid) {
     urls.push(`https://docs.google.com/spreadsheets/d/${config.sheetId}/gviz/tq?tqx=out:csv&gid=${config.gid}`);
-    urls.push(`https://docs.google.com/spreadsheets/d/${config.sheetId}/export?format=csv&gid=${config.gid}`);
   }
   urls.push(`https://docs.google.com/spreadsheets/d/${config.sheetId}/gviz/tq?tqx=out:csv`);
 
