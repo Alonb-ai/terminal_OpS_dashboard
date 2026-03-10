@@ -5,74 +5,355 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
 <meta name="apple-mobile-web-app-capable" content="yes">
 <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
-<meta name="theme-color" content="#0f172a">
-<title>Manager — לוח בקרה</title>
-<link href="https://fonts.googleapis.com/css2?family=Heebo:wght@300;400;500;700;900&display=swap" rel="stylesheet">
+<meta name="theme-color" content="#faf8f5">
+<title>Manager Dashboard</title>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600&family=Heebo:wght@200;300;400;500;600&display=swap" rel="stylesheet">
 <style>
-*{margin:0;padding:0;box-sizing:border-box}
-body{font-family:'Heebo','Segoe UI',sans-serif;background:#0f172a;color:#e2e8f0;min-height:100vh;-webkit-tap-highlight-color:transparent}
-.container{max-width:960px;margin:0 auto;padding:16px}
-.header{background:linear-gradient(135deg,#1e293b,#334155);border-radius:16px;padding:20px;margin-bottom:16px;border:1px solid #475569}
-.header h1{font-size:22px;font-weight:900;color:#f8fafc}
-.header p{color:#94a3b8;font-size:13px;margin-top:6px}
-.sync-bar{display:flex;justify-content:space-between;align-items:center;padding:8px 14px;background:#1e293b;border-radius:10px;margin-bottom:16px;font-size:11px;border:1px solid #334155}
-.sync-status{display:flex;align-items:center;gap:6px}
-.sync-dot{width:8px;height:8px;border-radius:50%;display:inline-block}
-.sync-dot.ok{background:#10b981}
-.sync-dot.err{background:#ef4444}
-.sync-dot.loading{background:#f59e0b;animation:pulse 1s infinite}
-@keyframes pulse{0%,100%{opacity:1}50%{opacity:.3}}
-.stats{display:grid;grid-template-columns:repeat(3,1fr);gap:8px;margin-bottom:16px}
-.stat{background:#1e293b;border-radius:10px;padding:12px 8px;text-align:center}
-.stat-val{font-size:20px;font-weight:700}
-.stat-lbl{font-size:11px;color:#94a3b8;margin-top:2px}
-.progress-wrap{background:#1e293b;border-radius:10px;padding:14px;margin-bottom:16px}
-.progress-header{display:flex;justify-content:space-between;margin-bottom:6px;font-size:13px}
-.progress-bar{background:#334155;border-radius:6px;height:10px;overflow:hidden}
-.progress-fill{background:linear-gradient(90deg,#10b981,#06b6d4);height:100%;border-radius:6px;transition:width .3s}
-.hours-section{background:#1e293b;border-radius:10px;padding:14px;margin-bottom:16px;border:1px solid #334155}
-.hours-header{display:flex;justify-content:space-between;align-items:center;margin-bottom:10px}
-.hours-header h2{font-size:16px;font-weight:700;color:#06b6d4}
-.btn{border:none;border-radius:8px;padding:8px 14px;cursor:pointer;font-weight:600;font-size:12px;font-family:inherit}
-.btn-cyan{background:#06b6d4;color:#0f172a}
-.btn-green{background:#10b981;color:#fff}
-.btn-sm{padding:5px 10px;font-size:11px}
-.hours-form{display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-bottom:10px}
-.form-group label{font-size:10px;color:#94a3b8;display:block;margin-bottom:3px}
-.form-group input,.form-group select{width:100%;background:#0f172a;border:1px solid #475569;border-radius:6px;padding:7px;color:#e2e8f0;font-size:12px;font-family:inherit}
-.hours-table{width:100%;border-collapse:collapse;font-size:12px;margin-top:8px}
-.hours-table th{text-align:right;padding:5px;color:#94a3b8;border-bottom:1px solid #334155}
-.hours-table td{padding:5px}
-.hours-summary{display:flex;gap:12px;font-size:12px;margin-top:10px;padding-top:10px;border-top:1px solid #334155;flex-wrap:wrap}
-.controls{display:flex;gap:6px;margin-bottom:16px;flex-wrap:wrap}
-.search{flex:1;min-width:140px;background:#1e293b;border:1px solid #334155;border-radius:8px;padding:9px 12px;color:#e2e8f0;font-size:13px;font-family:inherit}
-.filter-btn{background:#1e293b;color:#94a3b8;border:1px solid #334155;border-radius:8px;padding:7px 14px;cursor:pointer;font-size:12px;font-family:inherit}
-.filter-btn.active{background:#3b82f6;color:#fff;border-color:#3b82f6}
-.category{margin-bottom:12px;background:#1e293b;border-radius:10px;overflow:hidden;border:1px solid #334155}
-.cat-header{display:flex;justify-content:space-between;align-items:center;padding:12px 14px;cursor:pointer}
-.cat-header .info{display:flex;align-items:center;gap:8px}
-.cat-header .arrow{font-size:11px;transition:transform .2s}
-.cat-header .name{font-weight:700;font-size:14px}
-.cat-header .count{font-size:11px;color:#64748b;background:#0f172a;border-radius:10px;padding:2px 8px}
-.cat-progress{display:flex;align-items:center;gap:6px}
-.cat-bar{width:60px;height:5px;background:#334155;border-radius:3px;overflow:hidden}
-.cat-fill{height:100%;border-radius:3px}
-.cat-pct{font-size:11px;color:#94a3b8;min-width:28px;text-align:left}
-.task-list{padding:0 14px 10px}
-.task{display:flex;align-items:center;gap:8px;padding:7px 2px;border-bottom:1px solid #0f172a}
-.task input[type=checkbox]{width:16px;height:16px;cursor:pointer;flex-shrink:0}
-.task-text{flex:1;font-size:12px}
-.task-text.done{text-decoration:line-through;color:#475569}
-.badge{font-size:9px;border-radius:3px;padding:1px 5px;margin-right:4px;white-space:nowrap}
-.badge-green{background:#10b981;color:#fff}
-.badge-orange{background:#f97316;color:#fff}
-.footer{text-align:center;padding:16px 0;color:#475569;font-size:11px}
-.setup-box{background:#1e293b;border:2px dashed #f59e0b;border-radius:12px;padding:20px;margin-bottom:16px;text-align:center}
-.setup-box h3{color:#f59e0b;margin-bottom:8px}
-.setup-box input{width:100%;background:#0f172a;border:1px solid #475569;border-radius:6px;padding:8px;color:#e2e8f0;font-size:12px;margin:6px 0;font-family:inherit;direction:ltr}
-@media(max-width:600px){
-  .stats{grid-template-columns:repeat(2,1fr)}
-  .hours-form{grid-template-columns:1fr 1fr}
+:root {
+  --bg: #faf8f5;
+  --card: #ffffff;
+  --border: #e8e4df;
+  --border-light: #f0ece7;
+  --text: #2d2a26;
+  --text-secondary: #8a8580;
+  --text-muted: #b5b0aa;
+  --accent: #c47f5a;
+  --accent-light: #f0ddd0;
+  --success: #7ab07a;
+  --success-light: #e8f5e8;
+  --warning: #d4a853;
+  --warning-light: #faf0d8;
+  --danger: #c76a6a;
+  --danger-light: #fae8e8;
+  --purple: #9b8ec4;
+  --purple-light: #ede8f5;
+  --blue: #6b9bc3;
+  --blue-light: #e4eef7;
+  --teal: #6aada0;
+  --teal-light: #e0f2ef;
+  --shadow: 0 1px 3px rgba(0,0,0,0.04), 0 1px 2px rgba(0,0,0,0.02);
+  --shadow-hover: 0 4px 12px rgba(0,0,0,0.06);
+  --radius: 12px;
+  --radius-sm: 8px;
+}
+* { margin: 0; padding: 0; box-sizing: border-box; }
+body {
+  font-family: 'Heebo', 'Inter', -apple-system, sans-serif;
+  background: var(--bg);
+  color: var(--text);
+  min-height: 100vh;
+  -webkit-tap-highlight-color: transparent;
+  font-weight: 300;
+  line-height: 1.6;
+}
+.container { max-width: 880px; margin: 0 auto; padding: 20px 16px; }
+
+/* Header */
+.header {
+  padding: 28px 0 20px;
+  margin-bottom: 4px;
+}
+.header h1 {
+  font-size: 26px;
+  font-weight: 200;
+  color: var(--text);
+  letter-spacing: -0.5px;
+}
+.header p {
+  color: var(--text-muted);
+  font-size: 13px;
+  font-weight: 300;
+  margin-top: 4px;
+}
+
+/* Sync bar */
+.sync-bar {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 10px 16px;
+  background: var(--card);
+  border-radius: var(--radius);
+  margin-bottom: 16px;
+  font-size: 12px;
+  border: 1px solid var(--border-light);
+  box-shadow: var(--shadow);
+}
+.sync-status { display: flex; align-items: center; gap: 8px; color: var(--text-secondary); }
+.sync-dot { width: 6px; height: 6px; border-radius: 50%; display: inline-block; }
+.sync-dot.ok { background: var(--success); }
+.sync-dot.err { background: var(--danger); }
+.sync-dot.loading { background: var(--warning); animation: pulse 1.2s ease-in-out infinite; }
+@keyframes pulse { 0%,100%{opacity:1} 50%{opacity:.3} }
+
+/* Stats */
+.stats {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 10px;
+  margin-bottom: 16px;
+}
+.stat {
+  background: var(--card);
+  border-radius: var(--radius);
+  padding: 16px 12px;
+  text-align: center;
+  border: 1px solid var(--border-light);
+  box-shadow: var(--shadow);
+  transition: box-shadow 0.2s;
+}
+.stat:hover { box-shadow: var(--shadow-hover); }
+.stat-val { font-size: 22px; font-weight: 400; letter-spacing: -0.5px; }
+.stat-lbl { font-size: 11px; color: var(--text-muted); margin-top: 2px; font-weight: 300; }
+
+/* Progress */
+.progress-wrap {
+  background: var(--card);
+  border-radius: var(--radius);
+  padding: 16px;
+  margin-bottom: 16px;
+  border: 1px solid var(--border-light);
+  box-shadow: var(--shadow);
+}
+.progress-header { display: flex; justify-content: space-between; margin-bottom: 8px; font-size: 13px; font-weight: 400; }
+.progress-bar { background: var(--border-light); border-radius: 20px; height: 6px; overflow: hidden; }
+.progress-fill { background: linear-gradient(90deg, var(--success), var(--teal)); height: 100%; border-radius: 20px; transition: width 0.4s ease; }
+
+/* Buttons */
+.btn {
+  border: none;
+  border-radius: var(--radius-sm);
+  padding: 8px 16px;
+  cursor: pointer;
+  font-weight: 400;
+  font-size: 12px;
+  font-family: inherit;
+  transition: all 0.2s;
+  letter-spacing: 0;
+}
+.btn-accent { background: var(--accent); color: #fff; }
+.btn-accent:hover { background: #b37250; }
+.btn-success { background: var(--success); color: #fff; }
+.btn-success:hover { background: #6a9e6a; }
+.btn-ghost { background: transparent; color: var(--accent); border: 1px solid var(--border); }
+.btn-ghost:hover { background: var(--accent-light); }
+.btn-sm { padding: 5px 12px; font-size: 11px; }
+
+/* Hours section */
+.hours-section {
+  background: var(--card);
+  border-radius: var(--radius);
+  padding: 18px;
+  margin-bottom: 16px;
+  border: 1px solid var(--border-light);
+  box-shadow: var(--shadow);
+}
+.hours-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 12px; }
+.hours-header h2 { font-size: 15px; font-weight: 400; color: var(--accent); }
+.hours-form { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; margin-bottom: 12px; }
+.form-group label { font-size: 11px; color: var(--text-muted); display: block; margin-bottom: 4px; font-weight: 300; }
+.form-group input, .form-group select {
+  width: 100%;
+  background: var(--bg);
+  border: 1px solid var(--border);
+  border-radius: var(--radius-sm);
+  padding: 8px 10px;
+  color: var(--text);
+  font-size: 13px;
+  font-family: inherit;
+  font-weight: 300;
+  transition: border-color 0.2s;
+}
+.form-group input:focus, .form-group select:focus { outline: none; border-color: var(--accent); }
+.hours-table { width: 100%; border-collapse: collapse; font-size: 12px; margin-top: 8px; }
+.hours-table th { text-align: right; padding: 6px 4px; color: var(--text-muted); border-bottom: 1px solid var(--border-light); font-weight: 400; }
+.hours-table td { padding: 6px 4px; font-weight: 300; }
+.hours-summary {
+  display: flex;
+  gap: 16px;
+  font-size: 12px;
+  margin-top: 12px;
+  padding-top: 12px;
+  border-top: 1px solid var(--border-light);
+  flex-wrap: wrap;
+  font-weight: 300;
+}
+
+/* Search & filters */
+.controls { display: flex; gap: 8px; margin-bottom: 16px; flex-wrap: wrap; }
+.search {
+  flex: 1;
+  min-width: 140px;
+  background: var(--card);
+  border: 1px solid var(--border);
+  border-radius: var(--radius-sm);
+  padding: 9px 14px;
+  color: var(--text);
+  font-size: 13px;
+  font-family: inherit;
+  font-weight: 300;
+  transition: border-color 0.2s;
+}
+.search:focus { outline: none; border-color: var(--accent); }
+.search::placeholder { color: var(--text-muted); }
+.filter-btn {
+  background: var(--card);
+  color: var(--text-secondary);
+  border: 1px solid var(--border);
+  border-radius: 20px;
+  padding: 7px 16px;
+  cursor: pointer;
+  font-size: 12px;
+  font-family: inherit;
+  font-weight: 300;
+  transition: all 0.2s;
+}
+.filter-btn:hover { border-color: var(--accent); color: var(--accent); }
+.filter-btn.active { background: var(--accent); color: #fff; border-color: var(--accent); }
+
+/* Categories */
+.category {
+  margin-bottom: 10px;
+  background: var(--card);
+  border-radius: var(--radius);
+  overflow: hidden;
+  border: 1px solid var(--border-light);
+  box-shadow: var(--shadow);
+  transition: box-shadow 0.2s;
+}
+.category:hover { box-shadow: var(--shadow-hover); }
+.cat-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 14px 16px;
+  cursor: pointer;
+  transition: background 0.15s;
+}
+.cat-header:hover { background: var(--bg); }
+.cat-header .info { display: flex; align-items: center; gap: 10px; }
+.cat-header .arrow { font-size: 10px; transition: transform 0.2s; color: var(--text-muted); }
+.cat-header .name { font-weight: 400; font-size: 14px; }
+.cat-header .count {
+  font-size: 11px;
+  color: var(--text-muted);
+  background: var(--bg);
+  border-radius: 12px;
+  padding: 2px 10px;
+  font-weight: 300;
+}
+.cat-progress { display: flex; align-items: center; gap: 8px; }
+.cat-bar { width: 50px; height: 3px; background: var(--border-light); border-radius: 2px; overflow: hidden; }
+.cat-fill { height: 100%; border-radius: 2px; }
+.cat-pct { font-size: 11px; color: var(--text-muted); min-width: 28px; text-align: left; font-weight: 300; }
+
+/* Task list */
+.task-list { padding: 0 16px 12px; }
+.task {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  padding: 8px 0;
+  border-bottom: 1px solid var(--border-light);
+  transition: background 0.15s;
+}
+.task:last-child { border-bottom: none; }
+.task:hover { background: rgba(0,0,0,0.01); }
+.task input[type=checkbox] {
+  -webkit-appearance: none;
+  appearance: none;
+  width: 18px;
+  height: 18px;
+  border: 1.5px solid var(--border);
+  border-radius: 5px;
+  cursor: pointer;
+  flex-shrink: 0;
+  transition: all 0.2s;
+  position: relative;
+}
+.task input[type=checkbox]:checked {
+  background: var(--success);
+  border-color: var(--success);
+}
+.task input[type=checkbox]:checked::after {
+  content: '';
+  position: absolute;
+  left: 5px;
+  top: 2px;
+  width: 5px;
+  height: 9px;
+  border: solid #fff;
+  border-width: 0 1.5px 1.5px 0;
+  transform: rotate(45deg);
+}
+.task-text { flex: 1; font-size: 13px; font-weight: 300; }
+.task-text.done { text-decoration: line-through; color: var(--text-muted); }
+.badge {
+  font-size: 10px;
+  border-radius: 4px;
+  padding: 2px 6px;
+  margin-right: 4px;
+  white-space: nowrap;
+  font-weight: 400;
+}
+.badge-green { background: var(--success-light); color: var(--success); }
+.badge-orange { background: var(--warning-light); color: var(--warning); }
+
+/* Footer */
+.footer {
+  text-align: center;
+  padding: 24px 0;
+  color: var(--text-muted);
+  font-size: 11px;
+  font-weight: 300;
+}
+.footer a { color: var(--text-muted); text-decoration: none; transition: color 0.2s; }
+.footer a:hover { color: var(--accent); }
+
+/* Setup */
+.setup-box {
+  background: var(--card);
+  border: 1.5px dashed var(--accent);
+  border-radius: var(--radius);
+  padding: 28px 24px;
+  margin-bottom: 16px;
+  text-align: center;
+}
+.setup-box h3 { color: var(--accent); margin-bottom: 12px; font-weight: 400; font-size: 16px; }
+.setup-box input {
+  width: 100%;
+  background: var(--bg);
+  border: 1px solid var(--border);
+  border-radius: var(--radius-sm);
+  padding: 10px 12px;
+  color: var(--text);
+  font-size: 13px;
+  margin: 5px 0;
+  font-family: inherit;
+  font-weight: 300;
+  direction: ltr;
+}
+.setup-box input:focus { outline: none; border-color: var(--accent); }
+
+/* Error box */
+.error-box {
+  background: var(--danger-light);
+  border: 1px solid #e0b8b8;
+  border-radius: var(--radius);
+  padding: 12px 16px;
+  margin-bottom: 16px;
+  font-size: 12px;
+  color: var(--danger);
+  font-weight: 300;
+}
+
+/* Decorative line accent */
+.divider { height: 1px; background: linear-gradient(90deg, transparent, var(--border), transparent); margin: 4px 0 16px; }
+
+@media(max-width:600px) {
+  .stats { grid-template-columns: repeat(2, 1fr); }
+  .hours-form { grid-template-columns: 1fr 1fr; }
+  .container { padding: 12px; }
 }
 </style>
 </head>
@@ -80,20 +361,18 @@ body{font-family:'Heebo','Segoe UI',sans-serif;background:#0f172a;color:#e2e8f0;
 <div class="container" id="app"></div>
 <script>
 // ============ CONFIG ============
-// User sets these once — stored in localStorage
 const CFG_KEY = 'manager-config';
 const HOURS_KEY = 'manager-work-hours-v2';
 const CACHE_KEY = 'manager-sheet-cache';
 
-// ===== HARDCODED SHEET CONFIG =====
 const DEFAULT_SHEET_ID = '16xVG6xHsrilXv5I1n-jPS49ka5Dz9Cr1f1e8PDZB2SA';
 const DEFAULT_GID = '1985634719';
 const DEFAULT_PUB_KEY = '2PACX-1vTV8NzgFdxt_mjW1MzZMVCX0CHuKkjYwQsc6j8IswgO2l8K_nAYUkzDPtMIOdHZEQxZkxiHoM7cK3gU';
 
 const CAT_COLORS = {
-  'מיידי':'#ef4444','באגים':'#f97316',"פיצ'רים עמר":'#8b5cf6',
-  "פיצ'רים יובל לי":'#3b82f6','טווח קרוב':'#06b6d4','טווח רחוק':'#64748b',
-  'Production':'#10b981','n8n אימות':'#d946ef'
+  'מיידי':'#c76a6a','באגים':'#d4a853',"פיצ'רים עמר":'#9b8ec4',
+  "פיצ'רים יובל לי":'#6b9bc3','טווח קרוב':'#6aada0','טווח רחוק':'#8a8580',
+  'Production':'#7ab07a','n8n אימות':'#b87dbf'
 };
 
 let config = null;
@@ -101,12 +380,10 @@ let state = { tasks: {}, hours: [], filter: 'all', search: '', collapsed: {}, sh
 
 function loadConfig() {
   try { config = JSON.parse(localStorage.getItem(CFG_KEY)); } catch {}
-  // Auto-set defaults if no config
   if (!config || !config.sheetId) {
     config = { sheetId: DEFAULT_SHEET_ID, gid: DEFAULT_GID, pubKey: DEFAULT_PUB_KEY, sheetName: '', webhookUrl: '' };
     saveConfig();
   }
-  // Ensure gid and pubKey exist on old configs
   if (!config.gid || !config.pubKey) {
     config.gid = config.gid || DEFAULT_GID;
     config.pubKey = config.pubKey || DEFAULT_PUB_KEY;
@@ -157,7 +434,7 @@ function csvToTasks(rows) {
   const cats = {};
   for (const r of rows) {
     const cat = r.category || 'אחר';
-    if (!cats[cat]) cats[cat] = { color: CAT_COLORS[cat] || '#64748b', tasks: [] };
+    if (!cats[cat]) cats[cat] = { color: CAT_COLORS[cat] || '#8a8580', tasks: [] };
     cats[cat].tasks.push({
       id: parseInt(r.id) || Math.random() * 99999 | 0,
       text: r.task || '',
@@ -178,34 +455,64 @@ async function fetchSheet() {
   state.syncError = '';
   render();
 
-  // Try multiple URL formats — published URL first (most reliable for CORS)
+  // Try Apps Script first (if configured), then published CSV
+  const urls = [];
+
+  // 1. Apps Script Web App (supports read+write)
+  if (config.webhookUrl) {
+    urls.push({ url: config.webhookUrl + '?action=read', type: 'appsscript' });
+  }
+
+  // 2. Published CSV
   const pubKey = config.pubKey || DEFAULT_PUB_KEY;
   const gid = config.gid || DEFAULT_GID;
-  const urls = [];
-  // 1. Published CSV (best — no auth needed, CORS friendly)
   if (pubKey) {
-    urls.push(`https://docs.google.com/spreadsheets/d/e/${pubKey}/pub?gid=${gid}&single=true&output=csv`);
+    urls.push({ url: `https://docs.google.com/spreadsheets/d/e/${pubKey}/pub?gid=${gid}&single=true&output=csv`, type: 'csv' });
   }
-  // 2. gviz fallback
-  if (config.gid) {
-    urls.push(`https://docs.google.com/spreadsheets/d/${config.sheetId}/gviz/tq?tqx=out:csv&gid=${config.gid}`);
-  }
-  urls.push(`https://docs.google.com/spreadsheets/d/${config.sheetId}/gviz/tq?tqx=out:csv`);
 
-  for (const url of urls) {
+  // 3. gviz fallback
+  if (config.gid) {
+    urls.push({ url: `https://docs.google.com/spreadsheets/d/${config.sheetId}/gviz/tq?tqx=out:csv&gid=${config.gid}`, type: 'csv' });
+  }
+  urls.push({ url: `https://docs.google.com/spreadsheets/d/${config.sheetId}/gviz/tq?tqx=out:csv`, type: 'csv' });
+
+  for (const { url, type } of urls) {
     try {
       console.log('Trying:', url);
       const resp = await fetch(url);
       if (!resp.ok) { console.warn('HTTP ' + resp.status, url); continue; }
       const text = await resp.text();
-      // gviz might return JSON error instead of CSV
+
+      if (type === 'appsscript') {
+        const data = JSON.parse(text);
+        if (data.error) { console.warn('Apps Script error:', data.error); continue; }
+        if (data.rows && data.rows.length > 0) {
+          // Normalize boolean strings
+          const rows = data.rows.map(r => {
+            const nr = {};
+            for (const [k, v] of Object.entries(r)) {
+              nr[k] = typeof v === 'boolean' ? (v ? 'TRUE' : 'FALSE') : String(v);
+            }
+            return nr;
+          });
+          state.tasks = csvToTasks(rows);
+          state.syncStatus = 'ok';
+          state.syncError = '';
+          state.lastSync = Date.now();
+          cacheSheet(state.tasks);
+          render();
+          return true;
+        }
+        continue;
+      }
+
+      // CSV type
       if (text.startsWith('google.visualization') || text.startsWith('{')) {
         console.warn('Got gviz JSON response, not CSV:', text.substring(0, 200));
         continue;
       }
       const rows = parseCSV(text);
       if (rows.length === 0) { console.warn('Empty CSV from', url); continue; }
-      // Verify we got real columns
       const firstRow = rows[0];
       if (!firstRow.task && !firstRow.category && !firstRow.id) {
         console.warn('CSV missing expected columns. Got:', Object.keys(firstRow).join(', '));
@@ -229,17 +536,24 @@ async function fetchSheet() {
   return false;
 }
 
-// ============ WRITE BACK VIA N8N WEBHOOK ============
-async function updateTaskInSheet(id, done) {
-  if (!config || !config.webhookUrl) return;
-  try {
-    await fetch(config.webhookUrl, {
-      method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({ action: 'toggle', id, done, ts: new Date().toISOString() })
-    });
-  } catch (e) {
-    console.warn('Webhook failed:', e);
+// ============ WRITE BACK ============
+async function updateTaskInSheet(id, field, value) {
+  if (!config) return;
+
+  // Try Apps Script Web App
+  if (config.webhookUrl) {
+    try {
+      const payload = { action: 'update', id };
+      payload[field] = value;
+      await fetch(config.webhookUrl, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify(payload)
+      });
+      return;
+    } catch (e) {
+      console.warn('Apps Script write failed:', e);
+    }
   }
 }
 
@@ -247,21 +561,20 @@ async function updateTaskInSheet(id, done) {
 function render() {
   const app = document.getElementById('app');
 
-  // Setup screen if no config or explicitly showing setup
   if (state.showSetup || !config || !config.sheetId) {
     app.innerHTML = `
-    <div class="header"><h1>Manager App — לוח בקרה</h1><p>הגדרה ראשונית</p></div>
+    <div class="header"><h1>Manager Dashboard</h1><p>Setup</p></div>
     <div class="setup-box">
-      <h3>חיבור ל-Google Sheet</h3>
-      <p style="color:#94a3b8;font-size:12px;margin-bottom:12px">
-        1. ייבא את ה-CSV לשיטס חדש<br>
-        2. File → Share → Publish to web → CSV<br>
-        3. העתק את ה-Sheet ID מה-URL
+      <h3>Google Sheet Connection</h3>
+      <p style="color:var(--text-muted);font-size:12px;margin-bottom:14px">
+        1. Open the Sheet in Extensions > Apps Script<br>
+        2. Paste the Apps Script code and Deploy as Web App<br>
+        3. Paste the Web App URL below
       </p>
-      <input id="cfg-sheet" placeholder="Sheet ID (מה-URL: /d/XXXXXX/edit)" value="${config?.sheetId || ''}">
-      <input id="cfg-gid" placeholder="GID של הגיליון (מה-URL: #gid=XXXX)" value="${config?.gid || ''}" style="direction:ltr">
-      <input id="cfg-webhook" placeholder="n8n webhook URL לעדכון (אופציונלי)" value="${config?.webhookUrl || ''}">
-      <br><button class="btn btn-green" onclick="saveSetup()" style="margin-top:8px;width:100%">שמור והתחבר</button>
+      <input id="cfg-sheet" placeholder="Sheet ID (from URL: /d/XXXXXX/edit)" value="${config?.sheetId || ''}">
+      <input id="cfg-gid" placeholder="Sheet GID (from URL: #gid=XXXX)" value="${config?.gid || ''}">
+      <input id="cfg-webhook" placeholder="Apps Script Web App URL (for read+write)" value="${config?.webhookUrl || ''}">
+      <br><button class="btn btn-success" onclick="saveSetup()" style="margin-top:10px;width:100%;padding:10px">Connect</button>
     </div>`;
     return;
   }
@@ -274,60 +587,62 @@ function render() {
   const deadline = new Date('2026-03-31'), today = new Date();
   const daysLeft = Math.max(0, Math.ceil((deadline - today) / 864e5));
   const remaining = total - done;
-  const pace = daysLeft > 0 ? (remaining / daysLeft).toFixed(1) : '∞';
+  const pace = daysLeft > 0 ? (remaining / daysLeft).toFixed(1) : '--';
   const syncTime = state.lastSync ? new Date(state.lastSync).toLocaleTimeString('he-IL', { hour: '2-digit', minute: '2-digit' }) : '---';
   const syncClass = state.syncStatus;
 
   let h = `
 <div class="header">
-  <h1>Manager App — לוח בקרה</h1>
-  <p>דדליין: 31.03.2026 | ${daysLeft} ימים נותרו</p>
+  <h1>Manager Dashboard</h1>
+  <p>${daysLeft} days left</p>
 </div>
 <div class="sync-bar">
-  <div class="sync-status"><span class="sync-dot ${syncClass}"></span> ${syncClass === 'ok' ? 'מסונכרן' : syncClass === 'loading' ? 'טוען...' : 'שגיאת סנכרון'} | ${syncTime}</div>
-  <button class="btn btn-cyan btn-sm" onclick="fetchSheet()">רענן</button>
+  <div class="sync-status"><span class="sync-dot ${syncClass}"></span> ${syncClass === 'ok' ? 'Synced' : syncClass === 'loading' ? 'Loading...' : 'Sync error'} &middot; ${syncTime}</div>
+  <button class="btn btn-ghost btn-sm" onclick="fetchSheet()">Refresh</button>
 </div>
-${state.syncError ? `<div style="background:#451a03;border:1px solid #f97316;border-radius:8px;padding:10px;margin-bottom:16px;font-size:12px;color:#fed7aa">${state.syncError}<br><span style="color:#94a3b8;font-size:10px;direction:ltr;display:block;margin-top:4px">Sheet ID: ${config?.sheetId || '?'} | GID: ${config?.gid || 'none'}</span></div>` : ''}
+${state.syncError ? `<div class="error-box">${state.syncError}<br><span style="color:var(--text-muted);font-size:10px;direction:ltr;display:block;margin-top:4px">Sheet ID: ${config?.sheetId || '?'} | GID: ${config?.gid || 'none'}</span></div>` : ''}
 <div class="stats">
-  <div class="stat" style="border-right:3px solid #3b82f6"><div class="stat-val" style="color:#3b82f6">${total}</div><div class="stat-lbl">סה״כ</div></div>
-  <div class="stat" style="border-right:3px solid #10b981"><div class="stat-val" style="color:#10b981">${done} (${pct}%)</div><div class="stat-lbl">הושלמו</div></div>
-  <div class="stat" style="border-right:3px solid #f97316"><div class="stat-val" style="color:#f97316">${remaining}</div><div class="stat-lbl">נותרו</div></div>
-  <div class="stat" style="border-right:3px solid #d946ef"><div class="stat-val" style="color:#d946ef">${pace}/יום</div><div class="stat-lbl">קצב נדרש</div></div>
-  <div class="stat" style="border-right:3px solid #06b6d4"><div class="stat-val" style="color:#06b6d4">${totalHours.toFixed(1)}</div><div class="stat-lbl">שעות עבודה</div></div>
-  <div class="stat" style="border-right:3px solid #8b5cf6"><div class="stat-val" style="color:#8b5cf6">${daysWorked}</div><div class="stat-lbl">ימים</div></div>
+  <div class="stat"><div class="stat-val" style="color:var(--blue)">${total}</div><div class="stat-lbl">Total</div></div>
+  <div class="stat"><div class="stat-val" style="color:var(--success)">${done}</div><div class="stat-lbl">Done (${pct}%)</div></div>
+  <div class="stat"><div class="stat-val" style="color:var(--accent)">${remaining}</div><div class="stat-lbl">Remaining</div></div>
+  <div class="stat"><div class="stat-val" style="color:var(--purple)">${pace}/day</div><div class="stat-lbl">Pace needed</div></div>
+  <div class="stat"><div class="stat-val" style="color:var(--teal)">${totalHours.toFixed(1)}</div><div class="stat-lbl">Hours</div></div>
+  <div class="stat"><div class="stat-val" style="color:var(--warning)">${daysWorked}</div><div class="stat-lbl">Days worked</div></div>
 </div>
 <div class="progress-wrap">
-  <div class="progress-header"><span>התקדמות כללית</span><span style="color:#10b981;font-weight:700">${pct}%</span></div>
+  <div class="progress-header"><span>Overall progress</span><span style="color:var(--success);font-weight:500">${pct}%</span></div>
   <div class="progress-bar"><div class="progress-fill" style="width:${pct}%"></div></div>
 </div>`;
 
   // Work hours
   h += `<div class="hours-section">
-  <div class="hours-header"><h2>שעות עבודה</h2><button class="btn btn-cyan" onclick="toggleHoursForm()">${state.showHoursForm ? 'ביטול' : '+ שעות'}</button></div>`;
+  <div class="hours-header"><h2>Work hours</h2><button class="btn btn-ghost btn-sm" onclick="toggleHoursForm()">${state.showHoursForm ? 'Cancel' : '+ Add'}</button></div>`;
   if (state.showHoursForm) {
     h += `<div class="hours-form">
-    <div class="form-group"><label>תאריך</label><input type="date" id="h-date" value="${new Date().toISOString().split('T')[0]}"></div>
-    <div class="form-group"><label>שעות</label><input type="number" id="h-hours" step="0.5" min="0" max="16" placeholder="3.5" style="direction:ltr"></div>
-    <div class="form-group"><label>מיקום</label><select id="h-loc"><option>בית</option><option>משרד</option><option>שטח</option></select></div>
-    <div class="form-group"><label>הערות</label><input type="text" id="h-notes" placeholder="מה עבדת עליו..."></div>
-    </div><button class="btn btn-green" onclick="addHours()" style="width:100%;margin-bottom:8px">שמור</button>`;
+    <div class="form-group"><label>Date</label><input type="date" id="h-date" value="${new Date().toISOString().split('T')[0]}"></div>
+    <div class="form-group"><label>Hours</label><input type="number" id="h-hours" step="0.5" min="0" max="16" placeholder="3.5" style="direction:ltr"></div>
+    <div class="form-group"><label>Location</label><select id="h-loc"><option>Home</option><option>Office</option><option>Field</option></select></div>
+    <div class="form-group"><label>Notes</label><input type="text" id="h-notes" placeholder="What did you work on..."></div>
+    </div><button class="btn btn-success" onclick="addHours()" style="width:100%;margin-bottom:8px">Save</button>`;
   }
   if (state.hours.length > 0) {
-    h += `<div style="max-height:180px;overflow-y:auto"><table class="hours-table"><thead><tr><th>תאריך</th><th style="text-align:center">שעות</th><th style="text-align:center">מיקום</th><th>הערות</th><th></th></tr></thead><tbody>`;
+    h += `<div style="max-height:180px;overflow-y:auto"><table class="hours-table"><thead><tr><th>Date</th><th style="text-align:center">Hours</th><th style="text-align:center">Location</th><th>Notes</th><th></th></tr></thead><tbody>`;
     for (let e of [...state.hours].reverse()) {
-      h += `<tr><td>${e.date}</td><td style="text-align:center;color:#06b6d4;font-weight:600">${e.hours}</td><td style="text-align:center">${e.location}</td><td style="color:#94a3b8">${e.notes || ''}</td><td><button class="btn" style="background:none;color:#ef4444;font-size:13px;padding:2px" onclick="delHours(${e.id})">✕</button></td></tr>`;
+      h += `<tr><td>${e.date}</td><td style="text-align:center;color:var(--teal);font-weight:400">${e.hours}</td><td style="text-align:center">${e.location}</td><td style="color:var(--text-secondary)">${e.notes || ''}</td><td><button class="btn" style="background:none;color:var(--danger);font-size:13px;padding:2px" onclick="delHours(${e.id})">x</button></td></tr>`;
     }
     h += `</tbody></table></div>`;
   }
   const avg = daysWorked > 0 ? (totalHours / daysWorked).toFixed(1) : '0';
-  h += `<div class="hours-summary"><span>סה״כ: <b style="color:#06b6d4">${totalHours.toFixed(1)} שעות</b></span><span>ממוצע: <b style="color:#8b5cf6">${avg} שעות/יום</b></span></div></div>`;
+  h += `<div class="hours-summary"><span>Total: <b style="color:var(--teal)">${totalHours.toFixed(1)}h</b></span><span>Avg: <b style="color:var(--purple)">${avg}h/day</b></span></div></div>`;
+
+  h += `<div class="divider"></div>`;
 
   // Search & filter
   h += `<div class="controls">
-  <input class="search" placeholder="חיפוש..." value="${state.search}" oninput="setSearch(this.value)">
-  <button class="filter-btn ${state.filter === 'all' ? 'active' : ''}" onclick="setFilter('all')">הכל</button>
-  <button class="filter-btn ${state.filter === 'open' ? 'active' : ''}" onclick="setFilter('open')">פתוחות</button>
-  <button class="filter-btn ${state.filter === 'done' ? 'active' : ''}" onclick="setFilter('done')">הושלמו</button>
+  <input class="search" placeholder="Search tasks..." value="${state.search}" oninput="setSearch(this.value)">
+  <button class="filter-btn ${state.filter === 'all' ? 'active' : ''}" onclick="setFilter('all')">All</button>
+  <button class="filter-btn ${state.filter === 'open' ? 'active' : ''}" onclick="setFilter('open')">Open</button>
+  <button class="filter-btn ${state.filter === 'done' ? 'active' : ''}" onclick="setFilter('done')">Done</button>
   </div>`;
 
   // Categories
@@ -342,31 +657,36 @@ ${state.syncError ? `<div style="background:#451a03;border:1px solid #f97316;bor
     const catDone = tasks.filter(t => t.done).length;
     const catPct = tasks.length > 0 ? Math.round(catDone / tasks.length * 100) : 0;
     const isCol = state.collapsed[cat];
-
     const safeCat = cat.replace(/'/g, "\\'");
-    h += `<div class="category"><div class="cat-header" style="border-right:3px solid ${color}" onclick="toggleCat('${safeCat}')">
-    <div class="info"><span class="arrow" style="transform:rotate(${isCol ? '-90' : '0'}deg)">▼</span><span class="name">${cat}</span><span class="count">${catDone}/${tasks.length}</span></div>
+
+    h += `<div class="category"><div class="cat-header" onclick="toggleCat('${safeCat}')">
+    <div class="info">
+      <span class="arrow" style="transform:rotate(${isCol ? '-90' : '0'}deg)">&#9662;</span>
+      <span style="width:3px;height:18px;border-radius:2px;background:${color};display:inline-block"></span>
+      <span class="name">${cat}</span>
+      <span class="count">${catDone}/${tasks.length}</span>
+    </div>
     <div class="cat-progress"><div class="cat-bar"><div class="cat-fill" style="width:${catPct}%;background:${color}"></div></div><span class="cat-pct">${catPct}%</span></div>
     </div>`;
     if (!isCol) {
       h += `<div class="task-list">`;
       for (let t of filtered) {
         h += `<div class="task">
-        <input type="checkbox" ${t.done ? 'checked' : ''} onchange="toggle(${t.id})" style="accent-color:${color}">
+        <input type="checkbox" ${t.done ? 'checked' : ''} onchange="toggle(${t.id})">
         <span class="task-text ${t.done ? 'done' : ''}">${t.text}`;
-        if (t.v) h += ` <span class="badge badge-green">אומת ✓</span>`;
+        if (t.v) h += ` <span class="badge badge-green">Verified</span>`;
         if (t.n) h += ` <span class="badge badge-orange">${t.n}</span>`;
         h += `</span></div>`;
       }
-      if (filtered.length === 0) h += `<p style="color:#475569;font-size:12px;padding:6px">אין משימות</p>`;
+      if (filtered.length === 0) h += `<p style="color:var(--text-muted);font-size:12px;padding:8px 0">No tasks</p>`;
       h += `</div>`;
     }
     h += `</div>`;
   }
 
   h += `<div class="footer">
-    Manager Dashboard — ${new Date().toLocaleDateString('he-IL')}
-    <br><a href="#" onclick="resetConfig()" style="color:#475569;font-size:10px">שנה הגדרות</a>
+    Manager Dashboard &middot; ${new Date().toLocaleDateString('he-IL')}
+    <br><a href="#" onclick="resetConfig()">Settings</a>
   </div>`;
   app.innerHTML = h;
 }
@@ -376,8 +696,8 @@ function saveSetup() {
   const sheetId = document.getElementById('cfg-sheet').value.trim();
   const gid = document.getElementById('cfg-gid').value.trim();
   const webhookUrl = document.getElementById('cfg-webhook').value.trim();
-  if (!sheetId) return alert('חסר Sheet ID');
-  config = { sheetId, gid, sheetName: '', webhookUrl };
+  if (!sheetId) return alert('Missing Sheet ID');
+  config = { sheetId, gid, sheetName: '', webhookUrl, pubKey: DEFAULT_PUB_KEY };
   state.showSetup = false;
   saveConfig();
   fetchSheet();
@@ -394,7 +714,7 @@ function toggle(id) {
       if (t.id === id) {
         t.done = !t.done;
         cacheSheet(state.tasks);
-        updateTaskInSheet(id, t.done);
+        updateTaskInSheet(id, 'done', t.done ? 'TRUE' : 'FALSE');
         render();
         return;
       }
