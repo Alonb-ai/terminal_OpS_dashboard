@@ -1,395 +1,439 @@
-<!DOCTYPE html>
-<html lang="he" dir="rtl">
-<head>
-<meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-<meta name="apple-mobile-web-app-capable" content="yes">
-<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
-<meta name="theme-color" content="#0f172a">
-<title>Manager — לוח בקרה</title>
-<link href="https://fonts.googleapis.com/css2?family=Heebo:wght@300;400;500;700;900&display=swap" rel="stylesheet">
-<style>
-*{margin:0;padding:0;box-sizing:border-box}
-body{font-family:'Heebo','Segoe UI',sans-serif;background:#0f172a;color:#e2e8f0;min-height:100vh;-webkit-tap-highlight-color:transparent}
-.container{max-width:960px;margin:0 auto;padding:16px}
-.header{background:linear-gradient(135deg,#1e293b,#334155);border-radius:16px;padding:20px;margin-bottom:16px;border:1px solid #475569}
-.header h1{font-size:22px;font-weight:900;color:#f8fafc}
-.header p{color:#94a3b8;font-size:13px;margin-top:6px}
-.sync-bar{display:flex;justify-content:space-between;align-items:center;padding:8px 14px;background:#1e293b;border-radius:10px;margin-bottom:16px;font-size:11px;border:1px solid #334155}
-.sync-status{display:flex;align-items:center;gap:6px}
-.sync-dot{width:8px;height:8px;border-radius:50%;display:inline-block}
-.sync-dot.ok{background:#10b981}
-.sync-dot.err{background:#ef4444}
-.sync-dot.loading{background:#f59e0b;animation:pulse 1s infinite}
-@keyframes pulse{0%,100%{opacity:1}50%{opacity:.3}}
-.stats{display:grid;grid-template-columns:repeat(3,1fr);gap:8px;margin-bottom:16px}
-.stat{background:#1e293b;border-radius:10px;padding:12px 8px;text-align:center}
-.stat-val{font-size:20px;font-weight:700}
-.stat-lbl{font-size:11px;color:#94a3b8;margin-top:2px}
-.progress-wrap{background:#1e293b;border-radius:10px;padding:14px;margin-bottom:16px}
-.progress-header{display:flex;justify-content:space-between;margin-bottom:6px;font-size:13px}
-.progress-bar{background:#334155;border-radius:6px;height:10px;overflow:hidden}
-.progress-fill{background:linear-gradient(90deg,#10b981,#06b6d4);height:100%;border-radius:6px;transition:width .3s}
-.hours-section{background:#1e293b;border-radius:10px;padding:14px;margin-bottom:16px;border:1px solid #334155}
-.hours-header{display:flex;justify-content:space-between;align-items:center;margin-bottom:10px}
-.hours-header h2{font-size:16px;font-weight:700;color:#06b6d4}
-.btn{border:none;border-radius:8px;padding:8px 14px;cursor:pointer;font-weight:600;font-size:12px;font-family:inherit}
-.btn-cyan{background:#06b6d4;color:#0f172a}
-.btn-green{background:#10b981;color:#fff}
-.btn-sm{padding:5px 10px;font-size:11px}
-.hours-form{display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-bottom:10px}
-.form-group label{font-size:10px;color:#94a3b8;display:block;margin-bottom:3px}
-.form-group input,.form-group select{width:100%;background:#0f172a;border:1px solid #475569;border-radius:6px;padding:7px;color:#e2e8f0;font-size:12px;font-family:inherit}
-.hours-table{width:100%;border-collapse:collapse;font-size:12px;margin-top:8px}
-.hours-table th{text-align:right;padding:5px;color:#94a3b8;border-bottom:1px solid #334155}
-.hours-table td{padding:5px}
-.hours-summary{display:flex;gap:12px;font-size:12px;margin-top:10px;padding-top:10px;border-top:1px solid #334155;flex-wrap:wrap}
-.controls{display:flex;gap:6px;margin-bottom:16px;flex-wrap:wrap}
-.search{flex:1;min-width:140px;background:#1e293b;border:1px solid #334155;border-radius:8px;padding:9px 12px;color:#e2e8f0;font-size:13px;font-family:inherit}
-.filter-btn{background:#1e293b;color:#94a3b8;border:1px solid #334155;border-radius:8px;padding:7px 14px;cursor:pointer;font-size:12px;font-family:inherit}
-.filter-btn.active{background:#3b82f6;color:#fff;border-color:#3b82f6}
-.category{margin-bottom:12px;background:#1e293b;border-radius:10px;overflow:hidden;border:1px solid #334155}
-.cat-header{display:flex;justify-content:space-between;align-items:center;padding:12px 14px;cursor:pointer}
-.cat-header .info{display:flex;align-items:center;gap:8px}
-.cat-header .arrow{font-size:11px;transition:transform .2s}
-.cat-header .name{font-weight:700;font-size:14px}
-.cat-header .count{font-size:11px;color:#64748b;background:#0f172a;border-radius:10px;padding:2px 8px}
-.cat-progress{display:flex;align-items:center;gap:6px}
-.cat-bar{width:60px;height:5px;background:#334155;border-radius:3px;overflow:hidden}
-.cat-fill{height:100%;border-radius:3px}
-.cat-pct{font-size:11px;color:#94a3b8;min-width:28px;text-align:left}
-.task-list{padding:0 14px 10px}
-.task{display:flex;align-items:center;gap:8px;padding:7px 2px;border-bottom:1px solid #0f172a}
-.task input[type=checkbox]{width:16px;height:16px;cursor:pointer;flex-shrink:0}
-.task-text{flex:1;font-size:12px}
-.task-text.done{text-decoration:line-through;color:#475569}
-.badge{font-size:9px;border-radius:3px;padding:1px 5px;margin-right:4px;white-space:nowrap}
-.badge-green{background:#10b981;color:#fff}
-.badge-orange{background:#f97316;color:#fff}
-.footer{text-align:center;padding:16px 0;color:#475569;font-size:11px}
-.setup-box{background:#1e293b;border:2px dashed #f59e0b;border-radius:12px;padding:20px;margin-bottom:16px;text-align:center}
-.setup-box h3{color:#f59e0b;margin-bottom:8px}
-.setup-box input{width:100%;background:#0f172a;border:1px solid #475569;border-radius:6px;padding:8px;color:#e2e8f0;font-size:12px;margin:6px 0;font-family:inherit;direction:ltr}
-@media(max-width:600px){
-  .stats{grid-template-columns:repeat(2,1fr)}
-  .hours-form{grid-template-columns:1fr 1fr}
-}
-</style>
-</head>
-<body>
-<div class="container" id="app"></div>
-<script>
-// ============ CONFIG ============
-// User sets these once — stored in localStorage
-const CFG_KEY = 'manager-config';
-const HOURS_KEY = 'manager-work-hours-v2';
-const CACHE_KEY = 'manager-sheet-cache';
+import { useState, useReducer, useEffect } from "react";
 
-// ===== HARDCODED SHEET CONFIG =====
-const DEFAULT_SHEET_ID = '16xVG6xHsrilXv5I1n-jPS49ka5Dz9Cr1f1e8PDZB2SA';
-const DEFAULT_GID = '1985634719';
-
-const CAT_COLORS = {
-  'מיידי':'#ef4444','באגים':'#f97316',"פיצ'רים עמר":'#8b5cf6',
-  "פיצ'רים יובל לי":'#3b82f6','טווח קרוב':'#06b6d4','טווח רחוק':'#64748b',
-  'Production':'#10b981','n8n אימות':'#d946ef'
+const INITIAL_TASKS = {
+  "מיידי": {
+    color: "#ef4444",
+    tasks: [
+      { id: 1, text: "להוסיף כשירות וולדו אסיו וכו׳", done: false },
+      { id: 2, text: "ביטול - שעת ביטול 4/8/12 שעות, ביטול בשטח", done: false },
+      { id: 3, text: "טופס ביטול - מי ביטל, סיבת ביטול", done: false },
+      { id: 4, text: "משך טיסה, משך זמן בשטח, שעת המראה מתוכננת", done: false },
+      { id: 5, text: "הארכת משמרת בלובירד/לקוח", done: false },
+      { id: 6, text: "להוסיף באיחור מי איחר", done: false },
+      { id: 7, text: "לשנות מטיס חוץ ונהגים ליוזר במאנדיי", done: false },
+      { id: 8, text: "flight.flightDuration.split is not a function [line 250]", done: false },
+      { id: 9, text: "לעדכן db_config", done: false },
+      { id: 10, text: "כשירויות: להעביר סטטוס כשירות לשורת אייטם במאנדיי", done: false },
+      { id: 11, text: "תצוגת כרטיס לדיווחים אחרונים", done: false },
+      { id: 12, text: "מסמך הסבר לתצוגה לירון/יניר", done: false },
+      { id: 13, text: "שם לתוכנה", done: false },
+      { id: 14, text: "משך טיסה (חישוב)", done: false },
+      { id: 15, text: "לבדוק שם פלטפורמה זהה בכשירויות, דיווחים, דרישות, בייס, n8n", done: false },
+    ]
+  },
+  "באגים": {
+    color: "#f97316",
+    tasks: [
+      { id: 101, text: "הרשאות עריכה למשתמשים", done: false },
+      { id: 102, text: "פופאפ צפייה בדיווחים", done: false },
+      { id: 103, text: "כשירויות - חלק לעדכן חלק ליצור", done: false },
+      { id: 104, text: "אמלח בחיתוך מצב יומי יוצא ריק", done: false },
+      { id: 105, text: "פערי לוגיסטיקה במייל יוצא ריק", done: false },
+      { id: 106, text: "נהגים לא מתווספים לצוותי", done: false },
+      { id: 107, text: "בוטל/יצא ללא טיסות", done: false },
+      { id: 108, text: "ריווח שורות במייל סיכום", done: false },
+      { id: 109, text: "פערי לוגיסטיקה וסטטוס מטוסים בחיתוך מצב מבצעי", done: false },
+      { id: 110, text: "רום קיפאון - לשנות ממטרים לרגל", done: false },
+      { id: 111, text: "מצב בתדריך מזג אוויר באנגלית - clear", done: false },
+      { id: 112, text: "ביטול לא מפנה לטופס ביטול", done: false },
+      { id: 113, text: "לוודא פלטפורמות במאנדיי", done: false },
+      { id: 114, text: "נחיתה ידנית - להוסיף qland/gamepad", done: false },
+      { id: 115, text: "הדרכה - לחלק לסימולטור/שטח/קרקעי", done: false },
+      { id: 116, text: "תיקון כשירות הדרכה לפי סילבוס", done: false },
+      { id: 117, text: "לסגור מס״דים ומס״ז לספרות בלבד + שעות", done: false },
+      { id: 118, text: "שם האייטם מספר סידורי", done: false },
+      { id: 119, text: "תאנדר/וונדר בי להסיר I level", done: false },
+      { id: 120, text: "מספר סידורי D ליום F לטיסה H לריחוף", done: false },
+      { id: 121, text: "להוסיף דיווח ביטול למאנדיי + דיווחים אחרונים", done: false },
+      { id: 122, text: "תקלה פאולה", done: false },
+      { id: 123, text: "פופאפ שעות הפעלה קופץ מהר מדי", done: false },
+      { id: 124, text: "איחור ביום פיתוח בכרטיסיית טיסה", done: false },
+      { id: 125, text: "סידור מילונים - זיהוי כפילויות", done: false },
+      { id: 126, text: "נוטאם", done: false },
+      { id: 127, text: "דיווח חו״ל", done: false },
+      { id: 128, text: "הודעת פיתוח ומייל - דייק אירועים חריגים/הערות", done: false },
+      { id: 129, text: "ריחוף מופיע בכל הודעת פיתוח", done: false },
+      { id: 130, text: "לוודא סילבוסים ממילון", done: false },
+      { id: 131, text: "לתקן עריכת פרטי מערכת רשימת בלוקים", done: false },
+      { id: 132, text: "טעינת דיווח - שדות חדשים לא נשמרים", done: false },
+      { id: 133, text: "לתקן פופאפ שעות מפעילים", done: false },
+      { id: 134, text: "לתקן פורמס לוובהוק חדש", done: false },
+      { id: 135, text: "תיקונים קטנים בפורמס", done: false },
+      { id: 136, text: "לתקן דיווחי טיסה במאנדיי", done: false },
+      { id: 137, text: "לתקן טורים במאנדיי לדיווח חדש", done: false },
+      { id: 138, text: "סאבאייטם - מערכת ניווט/תקשורת/בלוק", done: false },
+      { id: 139, text: "טכנאי ביצע המראה כן/לא לפי שם", done: false },
+      { id: 140, text: "כשירויות להוסיף חוזי", done: false },
+      { id: 141, text: "בדיווח פיתוח לשנות מפעיל לביצע המראה/נחיתה", done: false },
+      { id: 142, text: "פורמס הדרכה", done: false },
+      { id: 143, text: "לשנות כשירות מ״בסיכון״ ל״צריך רענון״ בצהוב", done: false },
+      { id: 144, text: "בדיקת פורמס בדיווח אמת (כולל הדרכה)", done: false },
+      { id: 145, text: "להגדיר מילונים", done: false },
+      { id: 146, text: "להוסיף טורים חדשים במאנדיי", done: false },
+      { id: 147, text: "לבדוק חישוב משך שעות מפעיל והגדרת כשירויות", done: false },
+      { id: 148, text: "מבנה דיווח יום טיסות חדש", done: false },
+      { id: 149, text: "תיקון פורמס הדרכה", done: false },
+      { id: 150, text: "לסדר פלואו חלק ב׳", done: false },
+      { id: 151, text: "לסדר הודעת רכזת רק במבצעי", done: false },
+      { id: 152, text: "לסדר הודעת עדכון מנהל הדרכה בטסט", done: false },
+      { id: 153, text: "תיקון ברירת מחדל בלוק 12.7.7", done: false },
+      { id: 154, text: "להוסיף אפשרות 12/11 בבלוק", done: false },
+      { id: 155, text: "לסגור שמות לאיות אחד", done: false },
+      { id: 156, text: "דלק לתאנדר בלבד", done: false },
+      { id: 157, text: "משך טיסה ומשך חוזי על כל אחד", done: false },
+      { id: 158, text: "הוספת ביטול", done: false },
+      { id: 159, text: "לסדר וובהוק הזנת יום טיסות (פאולה/ליהי טריגר)", done: false },
+      { id: 160, text: "מז״א מבצעי - לסדר שדות", done: false },
+      { id: 161, text: "מעבר לסמס טווילו", done: false },
+      { id: 162, text: "Fuzzy לבחירה מהשיטס", done: true, verifiedInCode: true },
+      { id: 163, text: "פורמס דיווח שעות מתוכננות", done: false },
+      { id: 164, text: "מילוי אוטומטי פלטפורמה ובלוק במבצעי", done: false },
+      { id: 165, text: "באג פורמס הדרכה על סילבוסים", done: false },
+      { id: 166, text: "מעבר לbase44", done: true, verifiedInCode: true },
+      { id: 167, text: "עזיבה של railway", done: true, verifiedInCode: true },
+      { id: 168, text: "לסדר בפורמס ביצוע נחיתה לא על מפעילים", done: false },
+      { id: 169, text: "לעדכן תבנית טווילו מסג׳", done: false },
+      { id: 170, text: "הודעה אחרי 12 שעות לפתיחת חלון חדש", done: false },
+    ]
+  },
+  "פיצ'רים עמר": {
+    color: "#8b5cf6",
+    tasks: [
+      { id: 201, text: "באג - משך טיסה לא מחושב נכון אחרי חצות", done: false },
+      { id: 202, text: "הוספת שעת המראה ונחיתה לתצוגת טבלה", done: false },
+    ]
+  },
+  "פיצ'רים יובל לי": {
+    color: "#3b82f6",
+    tasks: [
+      { id: 301, text: "אופציה ליווי לקוחות - מבצעי/הדרכה", done: false },
+      { id: 302, text: "ימי טיסה חו״ל", done: false },
+      { id: 303, text: "סיורי שטח", done: false },
+      { id: 304, text: "ביטולי ימי טיסות - ביטול/דחייה שובץ/טרם שובץ", done: false },
+      { id: 305, text: "הסבת ימים שבוטלו - נקודות ואחוזים", done: false },
+      { id: 306, text: "חלוקה של WBVT (ניווט/תקשורת/מטע״ד)", done: false },
+      { id: 307, text: "רכזות תפעול - מעקב טיסות, הזנת ימים, הקפצה", done: false },
+      { id: 308, text: "דו״ח משמרות (שעות שטח, המראה-נחיתה, ממוכנות)", done: false },
+      { id: 309, text: "ביטולים מפורט (גורם מבטל, טכני, שעות ביטול)", done: false },
+      { id: 310, text: "בוטל בשטח + עיכובים במשמרת", done: false },
+      { id: 311, text: "שעות ביטול (מעל 12, מתחת ל-12/8/4)", done: false },
+    ]
+  },
+  "טווח קרוב": {
+    color: "#06b6d4",
+    tasks: [
+      { id: 401, text: "דיווח הדרכה - פורמס חניכים לבלוסום", done: false },
+      { id: 402, text: "לעדכן טופס ביטול", done: false },
+      { id: 403, text: "פילטר עם צ׳אבוט AI לדיווחים אחרונים", done: false },
+      { id: 404, text: "תכנית שבועית אוטומטית - מנוע שיבוץ (עם עמר)", done: false },
+      { id: 405, text: "דיווח חו״ל", done: false },
+    ]
+  },
+  "טווח רחוק": {
+    color: "#64748b",
+    tasks: [
+      { id: 501, text: "תכנית שבועית ודו״ח כשירויות - פירוט", done: false },
+      { id: 502, text: "ממשוק לאתניקס", done: false },
+      { id: 503, text: "אופציה לגאנט", done: false },
+      { id: 504, text: "מעקב שמישות מטוסים ותקלות (טכני)", done: false },
+      { id: 505, text: "חתימה על ציוד - רכבים/אייפדים", done: false },
+      { id: 506, text: "העברה מהמאנדיי (פיזור רכבים, צימרים, ארוחות, משימות)", done: false },
+      { id: 507, text: "הפעלת יום טיסות מהאפליקציה", done: false },
+      { id: 508, text: "עדכון ביטול/שינוי בזמן אמת למפעיל", done: false },
+    ]
+  },
+  "Production Checklist (קוד)": {
+    color: "#10b981",
+    tasks: [
+      { id: 601, text: "שלב 8 - מערכת התראות n8n", done: false },
+      { id: 602, text: "שלב 9 - טסטים לפני שחרור", done: false },
+      { id: 603, text: "שלב 10 - deploy (env vars, CLI, secret scan)", done: false },
+      { id: 604, text: "שלב 11 - אחרי שחרור (Sentry, Dependabot)", done: false },
+      { id: 605, text: "env vars בפאנל Base44", done: false },
+    ]
+  },
+  "n8n - אימות מול קוד": {
+    color: "#d946ef",
+    tasks: [
+      { id: 701, text: "שרשרת מזג אוויר (Weather chain fix)", done: true, verifiedInCode: true },
+      { id: 702, text: "wakeup12 / 20:00 trigger", done: false, verifiedInCode: false, note: "חסר בקוד - צריך ליצור" },
+      { id: 703, text: "Blossom KC integration", done: false, verifiedInCode: false, note: "חסר בקוד - צריך ליצור" },
+      { id: 704, text: "UAVScheduler webhooks", done: true, verifiedInCode: true },
+      { id: 705, text: "Prepare_Subitems (סאבאייטמס למאנדיי)", done: true, verifiedInCode: true },
+      { id: 706, text: "Calculate_Status Cron (כשירויות)", done: true, verifiedInCode: true },
+      { id: 707, text: "Operator Dashboard במאנדיי", done: false, verifiedInCode: false, note: "חסר בקוד - צריך ליצור" },
+      { id: 708, text: "useURLState + Profile by Project (Base44)", done: true, verifiedInCode: true },
+    ]
+  }
 };
 
-let config = null;
-let state = { tasks: {}, hours: [], filter: 'all', search: '', collapsed: {}, showHoursForm: false, showSetup: false, syncStatus: 'loading', lastSync: null };
+const WORK_HOURS_KEY = "manager-work-hours-log";
 
-function loadConfig() {
-  try { config = JSON.parse(localStorage.getItem(CFG_KEY)); } catch {}
-  // Auto-set defaults if no config
-  if (!config || !config.sheetId) {
-    config = { sheetId: DEFAULT_SHEET_ID, gid: DEFAULT_GID, sheetName: '', webhookUrl: '' };
-    saveConfig();
-  }
-  // Ensure gid exists on old configs
-  if (!config.gid) { config.gid = DEFAULT_GID; saveConfig(); }
-}
-function saveConfig() {
-  try { localStorage.setItem(CFG_KEY, JSON.stringify(config)); } catch {}
-}
-function loadHours() {
-  try { state.hours = JSON.parse(localStorage.getItem(HOURS_KEY)) || []; } catch { state.hours = []; }
-}
-function saveHours() {
-  try { localStorage.setItem(HOURS_KEY, JSON.stringify(state.hours)); } catch {}
-}
-function cacheSheet(tasks) {
-  try { localStorage.setItem(CACHE_KEY, JSON.stringify({ tasks, ts: Date.now() })); } catch {}
-}
-function loadCache() {
+function loadWorkHours() {
   try {
-    const c = JSON.parse(localStorage.getItem(CACHE_KEY));
-    if (c && c.tasks) { state.tasks = c.tasks; state.lastSync = c.ts; return true; }
-  } catch {}
-  return false;
+    const saved = localStorage.getItem(WORK_HOURS_KEY);
+    return saved ? JSON.parse(saved) : [];
+  } catch { return []; }
 }
 
-// ============ CSV PARSER ============
-function parseCSV(text) {
-  const lines = text.split('\n').filter(l => l.trim());
-  if (lines.length < 2) return [];
-  const headers = lines[0].split(',').map(h => h.trim().replace(/^\uFEFF/, ''));
-  return lines.slice(1).map(line => {
-    const vals = [];
-    let cur = '', inQ = false;
-    for (let ch of line) {
-      if (ch === '"') { inQ = !inQ; }
-      else if (ch === ',' && !inQ) { vals.push(cur.trim()); cur = ''; }
-      else { cur += ch; }
-    }
-    vals.push(cur.trim());
-    const obj = {};
-    headers.forEach((h, i) => { obj[h] = vals[i] || ''; });
-    return obj;
-  });
+function saveWorkHours(hours) {
+  try { localStorage.setItem(WORK_HOURS_KEY, JSON.stringify(hours)); } catch {}
 }
 
-function csvToTasks(rows) {
-  const cats = {};
-  for (const r of rows) {
-    const cat = r.category || 'אחר';
-    if (!cats[cat]) cats[cat] = { color: CAT_COLORS[cat] || '#64748b', tasks: [] };
-    cats[cat].tasks.push({
-      id: parseInt(r.id) || Math.random() * 99999 | 0,
-      text: r.task || '',
-      done: String(r.done).toUpperCase() === 'TRUE',
-      v: String(r.verified_in_code).toUpperCase() === 'TRUE',
-      n: r.note || '',
-      est: parseFloat(r.est_hours) || 0,
-      priority: parseInt(r.priority) || 9
-    });
-  }
-  return cats;
-}
-
-// ============ FETCH FROM GOOGLE SHEET ============
-async function fetchSheet() {
-  if (!config || !config.sheetId) return false;
-  state.syncStatus = 'loading';
-  render();
-  try {
-    // gviz endpoint supports CORS when sheet is published to web
-    const url = config.gid
-      ? `https://docs.google.com/spreadsheets/d/${config.sheetId}/gviz/tq?tqx=out:csv&gid=${config.gid}`
-      : `https://docs.google.com/spreadsheets/d/${config.sheetId}/gviz/tq?tqx=out:csv&sheet=${config.sheetName || 'tasks'}`;
-    const resp = await fetch(url);
-    if (!resp.ok) throw new Error('HTTP ' + resp.status);
-    const text = await resp.text();
-    const rows = parseCSV(text);
-    if (rows.length === 0) throw new Error('Empty sheet');
-    state.tasks = csvToTasks(rows);
-    state.syncStatus = 'ok';
-    state.lastSync = Date.now();
-    cacheSheet(state.tasks);
-    render();
-    return true;
-  } catch (e) {
-    console.warn('Sheet fetch failed:', e);
-    state.syncStatus = 'err';
-    render();
-    return false;
-  }
-}
-
-// ============ WRITE BACK VIA N8N WEBHOOK ============
-async function updateTaskInSheet(id, done) {
-  if (!config || !config.webhookUrl) return;
-  try {
-    await fetch(config.webhookUrl, {
-      method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({ action: 'toggle', id, done, ts: new Date().toISOString() })
-    });
-  } catch (e) {
-    console.warn('Webhook failed:', e);
-  }
-}
-
-// ============ RENDER ============
-function render() {
-  const app = document.getElementById('app');
-
-  // Setup screen if no config or explicitly showing setup
-  if (state.showSetup || !config || !config.sheetId) {
-    app.innerHTML = `
-    <div class="header"><h1>Manager App — לוח בקרה</h1><p>הגדרה ראשונית</p></div>
-    <div class="setup-box">
-      <h3>חיבור ל-Google Sheet</h3>
-      <p style="color:#94a3b8;font-size:12px;margin-bottom:12px">
-        1. ייבא את ה-CSV לשיטס חדש<br>
-        2. File → Share → Publish to web → CSV<br>
-        3. העתק את ה-Sheet ID מה-URL
-      </p>
-      <input id="cfg-sheet" placeholder="Sheet ID (מה-URL: /d/XXXXXX/edit)" value="${config?.sheetId || ''}">
-      <input id="cfg-gid" placeholder="GID של הגיליון (מה-URL: #gid=XXXX)" value="${config?.gid || ''}" style="direction:ltr">
-      <input id="cfg-webhook" placeholder="n8n webhook URL לעדכון (אופציונלי)" value="${config?.webhookUrl || ''}">
-      <br><button class="btn btn-green" onclick="saveSetup()" style="margin-top:8px;width:100%">שמור והתחבר</button>
-    </div>`;
-    return;
-  }
-
-  const allTasks = Object.values(state.tasks).flatMap(c => c.tasks);
-  const total = allTasks.length, done = allTasks.filter(t => t.done).length;
-  const pct = total > 0 ? Math.round(done / total * 100) : 0;
-  const totalHours = state.hours.reduce((s, e) => s + (parseFloat(e.hours) || 0), 0);
-  const daysWorked = new Set(state.hours.map(e => e.date)).size;
-  const deadline = new Date('2026-03-31'), today = new Date();
-  const daysLeft = Math.max(0, Math.ceil((deadline - today) / 864e5));
-  const remaining = total - done;
-  const pace = daysLeft > 0 ? (remaining / daysLeft).toFixed(1) : '∞';
-  const syncTime = state.lastSync ? new Date(state.lastSync).toLocaleTimeString('he-IL', { hour: '2-digit', minute: '2-digit' }) : '---';
-  const syncClass = state.syncStatus;
-
-  let h = `
-<div class="header">
-  <h1>Manager App — לוח בקרה</h1>
-  <p>דדליין: 31.03.2026 | ${daysLeft} ימים נותרו</p>
-</div>
-<div class="sync-bar">
-  <div class="sync-status"><span class="sync-dot ${syncClass}"></span> ${syncClass === 'ok' ? 'מסונכרן' : syncClass === 'loading' ? 'טוען...' : 'שגיאת סנכרון'} | ${syncTime}</div>
-  <button class="btn btn-cyan btn-sm" onclick="fetchSheet()">רענן</button>
-</div>
-<div class="stats">
-  <div class="stat" style="border-right:3px solid #3b82f6"><div class="stat-val" style="color:#3b82f6">${total}</div><div class="stat-lbl">סה״כ</div></div>
-  <div class="stat" style="border-right:3px solid #10b981"><div class="stat-val" style="color:#10b981">${done} (${pct}%)</div><div class="stat-lbl">הושלמו</div></div>
-  <div class="stat" style="border-right:3px solid #f97316"><div class="stat-val" style="color:#f97316">${remaining}</div><div class="stat-lbl">נותרו</div></div>
-  <div class="stat" style="border-right:3px solid #d946ef"><div class="stat-val" style="color:#d946ef">${pace}/יום</div><div class="stat-lbl">קצב נדרש</div></div>
-  <div class="stat" style="border-right:3px solid #06b6d4"><div class="stat-val" style="color:#06b6d4">${totalHours.toFixed(1)}</div><div class="stat-lbl">שעות עבודה</div></div>
-  <div class="stat" style="border-right:3px solid #8b5cf6"><div class="stat-val" style="color:#8b5cf6">${daysWorked}</div><div class="stat-lbl">ימים</div></div>
-</div>
-<div class="progress-wrap">
-  <div class="progress-header"><span>התקדמות כללית</span><span style="color:#10b981;font-weight:700">${pct}%</span></div>
-  <div class="progress-bar"><div class="progress-fill" style="width:${pct}%"></div></div>
-</div>`;
-
-  // Work hours
-  h += `<div class="hours-section">
-  <div class="hours-header"><h2>שעות עבודה</h2><button class="btn btn-cyan" onclick="toggleHoursForm()">${state.showHoursForm ? 'ביטול' : '+ שעות'}</button></div>`;
-  if (state.showHoursForm) {
-    h += `<div class="hours-form">
-    <div class="form-group"><label>תאריך</label><input type="date" id="h-date" value="${new Date().toISOString().split('T')[0]}"></div>
-    <div class="form-group"><label>שעות</label><input type="number" id="h-hours" step="0.5" min="0" max="16" placeholder="3.5" style="direction:ltr"></div>
-    <div class="form-group"><label>מיקום</label><select id="h-loc"><option>בית</option><option>משרד</option><option>שטח</option></select></div>
-    <div class="form-group"><label>הערות</label><input type="text" id="h-notes" placeholder="מה עבדת עליו..."></div>
-    </div><button class="btn btn-green" onclick="addHours()" style="width:100%;margin-bottom:8px">שמור</button>`;
-  }
-  if (state.hours.length > 0) {
-    h += `<div style="max-height:180px;overflow-y:auto"><table class="hours-table"><thead><tr><th>תאריך</th><th style="text-align:center">שעות</th><th style="text-align:center">מיקום</th><th>הערות</th><th></th></tr></thead><tbody>`;
-    for (let e of [...state.hours].reverse()) {
-      h += `<tr><td>${e.date}</td><td style="text-align:center;color:#06b6d4;font-weight:600">${e.hours}</td><td style="text-align:center">${e.location}</td><td style="color:#94a3b8">${e.notes || ''}</td><td><button class="btn" style="background:none;color:#ef4444;font-size:13px;padding:2px" onclick="delHours(${e.id})">✕</button></td></tr>`;
-    }
-    h += `</tbody></table></div>`;
-  }
-  const avg = daysWorked > 0 ? (totalHours / daysWorked).toFixed(1) : '0';
-  h += `<div class="hours-summary"><span>סה״כ: <b style="color:#06b6d4">${totalHours.toFixed(1)} שעות</b></span><span>ממוצע: <b style="color:#8b5cf6">${avg} שעות/יום</b></span></div></div>`;
-
-  // Search & filter
-  h += `<div class="controls">
-  <input class="search" placeholder="חיפוש..." value="${state.search}" oninput="setSearch(this.value)">
-  <button class="filter-btn ${state.filter === 'all' ? 'active' : ''}" onclick="setFilter('all')">הכל</button>
-  <button class="filter-btn ${state.filter === 'open' ? 'active' : ''}" onclick="setFilter('open')">פתוחות</button>
-  <button class="filter-btn ${state.filter === 'done' ? 'active' : ''}" onclick="setFilter('done')">הושלמו</button>
-  </div>`;
-
-  // Categories
-  for (let [cat, { color, tasks }] of Object.entries(state.tasks)) {
-    const filtered = tasks.filter(t => {
-      if (state.filter === 'open' && t.done) return false;
-      if (state.filter === 'done' && !t.done) return false;
-      if (state.search && !t.text.includes(state.search)) return false;
-      return true;
-    });
-    if (filtered.length === 0 && state.search) continue;
-    const catDone = tasks.filter(t => t.done).length;
-    const catPct = tasks.length > 0 ? Math.round(catDone / tasks.length * 100) : 0;
-    const isCol = state.collapsed[cat];
-
-    h += `<div class="category"><div class="cat-header" style="border-right:3px solid ${color}" onclick="toggleCat('${cat}')">
-    <div class="info"><span class="arrow" style="transform:rotate(${isCol ? '-90' : '0'}deg)">▼</span><span class="name">${cat}</span><span class="count">${catDone}/${tasks.length}</span></div>
-    <div class="cat-progress"><div class="cat-bar"><div class="cat-fill" style="width:${catPct}%;background:${color}"></div></div><span class="cat-pct">${catPct}%</span></div>
-    </div>`;
-    if (!isCol) {
-      h += `<div class="task-list">`;
-      for (let t of filtered) {
-        h += `<div class="task">
-        <input type="checkbox" ${t.done ? 'checked' : ''} onchange="toggle(${t.id})" style="accent-color:${color}">
-        <span class="task-text ${t.done ? 'done' : ''}">${t.text}`;
-        if (t.v) h += ` <span class="badge badge-green">אומת ✓</span>`;
-        if (t.n) h += ` <span class="badge badge-orange">${t.n}</span>`;
-        h += `</span></div>`;
+function taskReducer(state, action) {
+  switch (action.type) {
+    case "TOGGLE": {
+      const newState = { ...state };
+      for (const cat of Object.keys(newState)) {
+        newState[cat] = {
+          ...newState[cat],
+          tasks: newState[cat].tasks.map(t =>
+            t.id === action.id ? { ...t, done: !t.done } : t
+          )
+        };
       }
-      if (filtered.length === 0) h += `<p style="color:#475569;font-size:12px;padding:6px">אין משימות</p>`;
-      h += `</div>`;
+      return newState;
     }
-    h += `</div>`;
-  }
-
-  h += `<div class="footer">
-    Manager Dashboard — ${new Date().toLocaleDateString('he-IL')}
-    <br><a href="#" onclick="resetConfig()" style="color:#475569;font-size:10px">שנה הגדרות</a>
-  </div>`;
-  app.innerHTML = h;
-}
-
-// ============ ACTIONS ============
-function saveSetup() {
-  const sheetId = document.getElementById('cfg-sheet').value.trim();
-  const gid = document.getElementById('cfg-gid').value.trim();
-  const webhookUrl = document.getElementById('cfg-webhook').value.trim();
-  if (!sheetId) return alert('חסר Sheet ID');
-  config = { sheetId, gid, sheetName: '', webhookUrl };
-  saveConfig();
-  fetchSheet();
-}
-
-function resetConfig() {
-  state.showSetup = !state.showSetup;
-  render();
-}
-
-function toggle(id) {
-  for (let cat of Object.values(state.tasks)) {
-    for (let t of cat.tasks) {
-      if (t.id === id) {
-        t.done = !t.done;
-        cacheSheet(state.tasks);
-        updateTaskInSheet(id, t.done);
-        render();
-        return;
+    case "DELETE": {
+      const newState = { ...state };
+      for (const cat of Object.keys(newState)) {
+        newState[cat] = {
+          ...newState[cat],
+          tasks: newState[cat].tasks.filter(t => t.id !== action.id)
+        };
       }
+      return newState;
     }
+    case "ADD": {
+      const newState = { ...state };
+      const maxId = Math.max(...Object.values(newState).flatMap(c => c.tasks.map(t => t.id)), 0);
+      newState[action.category] = {
+        ...newState[action.category],
+        tasks: [...newState[action.category].tasks, { id: maxId + 1, text: action.text, done: false }]
+      };
+      return newState;
+    }
+    default: return state;
   }
 }
 
-function setFilter(f) { state.filter = f; render(); }
-function setSearch(v) { state.search = v; render(); }
-function toggleCat(c) { state.collapsed[c] = !state.collapsed[c]; render(); }
-function toggleHoursForm() { state.showHoursForm = !state.showHoursForm; render(); }
-function addHours() {
-  const d = document.getElementById('h-date').value;
-  const hrs = document.getElementById('h-hours').value;
-  const loc = document.getElementById('h-loc').value;
-  const notes = document.getElementById('h-notes').value;
-  if (!hrs) return;
-  state.hours.push({ id: Date.now(), date: d, hours: hrs, location: loc, notes });
-  state.showHoursForm = false; saveHours(); render();
-}
-function delHours(id) { state.hours = state.hours.filter(e => e.id !== id); saveHours(); render(); }
+export default function ManagerTaskDashboard() {
+  const [tasks, dispatch] = useReducer(taskReducer, INITIAL_TASKS);
+  const [filter, setFilter] = useState("all");
+  const [search, setSearch] = useState("");
+  const [collapsed, setCollapsed] = useState({});
+  const [newTaskCat, setNewTaskCat] = useState("");
+  const [newTaskText, setNewTaskText] = useState("");
+  const [workHours, setWorkHours] = useState(loadWorkHours);
+  const [showHoursForm, setShowHoursForm] = useState(false);
+  const [hoursInput, setHoursInput] = useState({ date: new Date().toISOString().split("T")[0], hours: "", location: "בית", notes: "" });
 
-// ============ INIT ============
-loadConfig();
-loadHours();
-if (config && config.sheetId) {
-  loadCache();
-  render();
-  fetchSheet();
-} else {
-  render();
+  useEffect(() => { saveWorkHours(workHours); }, [workHours]);
+
+  const allTasks = Object.entries(tasks).flatMap(([cat, { tasks: t }]) => t.map(task => ({ ...task, category: cat })));
+  const totalTasks = allTasks.length;
+  const doneTasks = allTasks.filter(t => t.done).length;
+  const pct = totalTasks > 0 ? Math.round((doneTasks / totalTasks) * 100) : 0;
+
+  const totalWorkHours = workHours.reduce((sum, e) => sum + (parseFloat(e.hours) || 0), 0);
+  const daysWorked = new Set(workHours.map(e => e.date)).size;
+
+  const deadline = new Date("2026-03-31");
+  const today = new Date();
+  const daysLeft = Math.max(0, Math.ceil((deadline - today) / (1000 * 60 * 60 * 24)));
+  const remainingTasks = totalTasks - doneTasks;
+  const tasksPerDay = daysLeft > 0 ? (remainingTasks / daysLeft).toFixed(1) : "∞";
+
+  const toggleCollapse = (cat) => setCollapsed(p => ({ ...p, [cat]: !p[cat] }));
+
+  const addWorkHoursEntry = () => {
+    if (!hoursInput.hours) return;
+    setWorkHours(prev => [...prev, { ...hoursInput, id: Date.now() }]);
+    setHoursInput({ date: new Date().toISOString().split("T")[0], hours: "", location: "בית", notes: "" });
+    setShowHoursForm(false);
+  };
+
+  const deleteHoursEntry = (id) => setWorkHours(prev => prev.filter(e => e.id !== id));
+
+  return (
+    <div dir="rtl" style={{ fontFamily: "'Heebo', 'Segoe UI', sans-serif", maxWidth: 960, margin: "0 auto", padding: 24, background: "#0f172a", minHeight: "100vh", color: "#e2e8f0" }}>
+      <style>{`@import url('https://fonts.googleapis.com/css2?family=Heebo:wght@300;400;500;700;900&display=swap');`}</style>
+
+      {/* Header */}
+      <div style={{ background: "linear-gradient(135deg, #1e293b 0%, #334155 100%)", borderRadius: 16, padding: 24, marginBottom: 24, border: "1px solid #475569" }}>
+        <h1 style={{ margin: 0, fontSize: 28, fontWeight: 900, color: "#f8fafc" }}>Manager App — לוח בקרה</h1>
+        <p style={{ margin: "8px 0 0", color: "#94a3b8", fontSize: 14 }}>מעקב משימות | דדליין: 31.03.2026 | {daysLeft} ימים נותרו</p>
+      </div>
+
+      {/* Stats Row */}
+      <div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fit, minmax(180px, 1fr))", gap: 12, marginBottom: 24 }}>
+        {[
+          { label: "סה״כ משימות", value: totalTasks, color: "#3b82f6" },
+          { label: "הושלמו", value: `${doneTasks} (${pct}%)`, color: "#10b981" },
+          { label: "נותרו", value: remainingTasks, color: "#f97316" },
+          { label: "קצב נדרש", value: `${tasksPerDay}/יום`, color: "#d946ef" },
+          { label: "שעות עבודה", value: totalWorkHours.toFixed(1), color: "#06b6d4" },
+          { label: "ימים עבדתי", value: daysWorked, color: "#8b5cf6" },
+        ].map((s, i) => (
+          <div key={i} style={{ background: "#1e293b", borderRadius: 12, padding: 16, borderRight: `4px solid ${s.color}`, textAlign: "center" }}>
+            <div style={{ fontSize: 24, fontWeight: 700, color: s.color }}>{s.value}</div>
+            <div style={{ fontSize: 12, color: "#94a3b8", marginTop: 4 }}>{s.label}</div>
+          </div>
+        ))}
+      </div>
+
+      {/* Progress Bar */}
+      <div style={{ background: "#1e293b", borderRadius: 12, padding: 16, marginBottom: 24 }}>
+        <div style={{ display: "flex", justifyContent: "space-between", marginBottom: 8 }}>
+          <span style={{ fontSize: 14, fontWeight: 500 }}>התקדמות כללית</span>
+          <span style={{ fontSize: 14, fontWeight: 700, color: "#10b981" }}>{pct}%</span>
+        </div>
+        <div style={{ background: "#334155", borderRadius: 8, height: 12, overflow: "hidden" }}>
+          <div style={{ background: "linear-gradient(90deg, #10b981, #06b6d4)", height: "100%", width: `${pct}%`, borderRadius: 8, transition: "width 0.3s" }} />
+        </div>
+      </div>
+
+      {/* Work Hours Section */}
+      <div style={{ background: "#1e293b", borderRadius: 12, padding: 16, marginBottom: 24, border: "1px solid #334155" }}>
+        <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", marginBottom: 12 }}>
+          <h2 style={{ margin: 0, fontSize: 18, fontWeight: 700, color: "#06b6d4" }}>שעות עבודה על הפרויקט</h2>
+          <button onClick={() => setShowHoursForm(!showHoursForm)} style={{ background: "#06b6d4", color: "#0f172a", border: "none", borderRadius: 8, padding: "8px 16px", cursor: "pointer", fontWeight: 600, fontSize: 13 }}>
+            {showHoursForm ? "ביטול" : "+ הוסף שעות"}
+          </button>
+        </div>
+
+        {showHoursForm && (
+          <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr 1fr 2fr auto", gap: 8, marginBottom: 12, alignItems: "end" }}>
+            <div>
+              <label style={{ fontSize: 11, color: "#94a3b8" }}>תאריך</label>
+              <input type="date" value={hoursInput.date} onChange={e => setHoursInput(p => ({ ...p, date: e.target.value }))} style={{ width: "100%", background: "#0f172a", border: "1px solid #475569", borderRadius: 6, padding: 8, color: "#e2e8f0", fontSize: 13 }} />
+            </div>
+            <div>
+              <label style={{ fontSize: 11, color: "#94a3b8" }}>שעות</label>
+              <input type="number" step="0.5" min="0" max="16" placeholder="3.5" value={hoursInput.hours} onChange={e => setHoursInput(p => ({ ...p, hours: e.target.value }))} style={{ width: "100%", background: "#0f172a", border: "1px solid #475569", borderRadius: 6, padding: 8, color: "#e2e8f0", fontSize: 13, direction: "ltr" }} />
+            </div>
+            <div>
+              <label style={{ fontSize: 11, color: "#94a3b8" }}>מיקום</label>
+              <select value={hoursInput.location} onChange={e => setHoursInput(p => ({ ...p, location: e.target.value }))} style={{ width: "100%", background: "#0f172a", border: "1px solid #475569", borderRadius: 6, padding: 8, color: "#e2e8f0", fontSize: 13 }}>
+                <option value="בית">בית</option>
+                <option value="משרד">משרד</option>
+                <option value="שטח">שטח</option>
+              </select>
+            </div>
+            <div>
+              <label style={{ fontSize: 11, color: "#94a3b8" }}>הערות</label>
+              <input type="text" placeholder="מה עבדת עליו..." value={hoursInput.notes} onChange={e => setHoursInput(p => ({ ...p, notes: e.target.value }))} style={{ width: "100%", background: "#0f172a", border: "1px solid #475569", borderRadius: 6, padding: 8, color: "#e2e8f0", fontSize: 13 }} />
+            </div>
+            <button onClick={addWorkHoursEntry} style={{ background: "#10b981", color: "#fff", border: "none", borderRadius: 6, padding: "8px 12px", cursor: "pointer", fontWeight: 600, fontSize: 13, whiteSpace: "nowrap" }}>שמור</button>
+          </div>
+        )}
+
+        {workHours.length > 0 && (
+          <div style={{ maxHeight: 200, overflowY: "auto" }}>
+            <table style={{ width: "100%", borderCollapse: "collapse", fontSize: 13 }}>
+              <thead>
+                <tr style={{ borderBottom: "1px solid #334155" }}>
+                  <th style={{ textAlign: "right", padding: 6, color: "#94a3b8" }}>תאריך</th>
+                  <th style={{ textAlign: "center", padding: 6, color: "#94a3b8" }}>שעות</th>
+                  <th style={{ textAlign: "center", padding: 6, color: "#94a3b8" }}>מיקום</th>
+                  <th style={{ textAlign: "right", padding: 6, color: "#94a3b8" }}>הערות</th>
+                  <th style={{ width: 32 }}></th>
+                </tr>
+              </thead>
+              <tbody>
+                {[...workHours].reverse().map(entry => (
+                  <tr key={entry.id} style={{ borderBottom: "1px solid #1e293b" }}>
+                    <td style={{ padding: 6 }}>{entry.date}</td>
+                    <td style={{ padding: 6, textAlign: "center", fontWeight: 600, color: "#06b6d4" }}>{entry.hours}</td>
+                    <td style={{ padding: 6, textAlign: "center" }}>{entry.location}</td>
+                    <td style={{ padding: 6, color: "#94a3b8" }}>{entry.notes}</td>
+                    <td><button onClick={() => deleteHoursEntry(entry.id)} style={{ background: "none", border: "none", color: "#ef4444", cursor: "pointer", fontSize: 14 }}>✕</button></td>
+                  </tr>
+                ))}
+              </tbody>
+            </table>
+          </div>
+        )}
+
+        <div style={{ display: "flex", gap: 16, marginTop: 12, paddingTop: 12, borderTop: "1px solid #334155", fontSize: 13 }}>
+          <span>סה״כ: <b style={{ color: "#06b6d4" }}>{totalWorkHours.toFixed(1)} שעות</b></span>
+          <span>ממוצע ליום: <b style={{ color: "#8b5cf6" }}>{daysWorked > 0 ? (totalWorkHours / daysWorked).toFixed(1) : "0"} שעות</b></span>
+          <span>ימים: <b>{daysWorked}</b></span>
+        </div>
+      </div>
+
+      {/* Search & Filter */}
+      <div style={{ display: "flex", gap: 8, marginBottom: 24, flexWrap: "wrap" }}>
+        <input value={search} onChange={e => setSearch(e.target.value)} placeholder="חיפוש משימות..." style={{ flex: 1, minWidth: 200, background: "#1e293b", border: "1px solid #334155", borderRadius: 8, padding: "10px 14px", color: "#e2e8f0", fontSize: 14 }} />
+        {["all", "open", "done"].map(f => (
+          <button key={f} onClick={() => setFilter(f)} style={{ background: filter === f ? "#3b82f6" : "#1e293b", color: filter === f ? "#fff" : "#94a3b8", border: "1px solid " + (filter === f ? "#3b82f6" : "#334155"), borderRadius: 8, padding: "8px 16px", cursor: "pointer", fontWeight: 500, fontSize: 13 }}>
+            {f === "all" ? "הכל" : f === "open" ? "פתוחות" : "הושלמו"}
+          </button>
+        ))}
+      </div>
+
+      {/* Add Task */}
+      <div style={{ display: "flex", gap: 8, marginBottom: 24 }}>
+        <select value={newTaskCat} onChange={e => setNewTaskCat(e.target.value)} style={{ background: "#1e293b", border: "1px solid #334155", borderRadius: 8, padding: "8px 12px", color: "#e2e8f0", fontSize: 13 }}>
+          <option value="">קטגוריה...</option>
+          {Object.keys(tasks).map(cat => <option key={cat} value={cat}>{cat}</option>)}
+        </select>
+        <input value={newTaskText} onChange={e => setNewTaskText(e.target.value)} placeholder="משימה חדשה..." onKeyDown={e => { if (e.key === "Enter" && newTaskCat && newTaskText.trim()) { dispatch({ type: "ADD", category: newTaskCat, text: newTaskText.trim() }); setNewTaskText(""); }}} style={{ flex: 1, background: "#1e293b", border: "1px solid #334155", borderRadius: 8, padding: "10px 14px", color: "#e2e8f0", fontSize: 14 }} />
+        <button onClick={() => { if (newTaskCat && newTaskText.trim()) { dispatch({ type: "ADD", category: newTaskCat, text: newTaskText.trim() }); setNewTaskText(""); }}} style={{ background: "#10b981", color: "#fff", border: "none", borderRadius: 8, padding: "8px 16px", cursor: "pointer", fontWeight: 600, fontSize: 13 }}>+ הוסף</button>
+      </div>
+
+      {/* Task Categories */}
+      {Object.entries(tasks).map(([cat, { color, tasks: catTasks }]) => {
+        const filtered = catTasks.filter(t => {
+          if (filter === "open" && t.done) return false;
+          if (filter === "done" && !t.done) return false;
+          if (search && !t.text.includes(search)) return false;
+          return true;
+        });
+        if (filtered.length === 0 && search) return null;
+        const catDone = catTasks.filter(t => t.done).length;
+        const catPct = catTasks.length > 0 ? Math.round((catDone / catTasks.length) * 100) : 0;
+        const isCollapsed = collapsed[cat];
+
+        return (
+          <div key={cat} style={{ marginBottom: 16, background: "#1e293b", borderRadius: 12, overflow: "hidden", border: "1px solid #334155" }}>
+            <div onClick={() => toggleCollapse(cat)} style={{ display: "flex", justifyContent: "space-between", alignItems: "center", padding: "14px 16px", cursor: "pointer", borderRight: `4px solid ${color}` }}>
+              <div style={{ display: "flex", alignItems: "center", gap: 10 }}>
+                <span style={{ fontSize: 12, transform: isCollapsed ? "rotate(-90deg)" : "rotate(0)", transition: "transform 0.2s" }}>▼</span>
+                <span style={{ fontWeight: 700, fontSize: 15 }}>{cat}</span>
+                <span style={{ fontSize: 12, color: "#64748b", background: "#0f172a", borderRadius: 12, padding: "2px 10px" }}>{catDone}/{catTasks.length}</span>
+              </div>
+              <div style={{ display: "flex", alignItems: "center", gap: 8 }}>
+                <div style={{ width: 80, height: 6, background: "#334155", borderRadius: 4, overflow: "hidden" }}>
+                  <div style={{ width: `${catPct}%`, height: "100%", background: color, borderRadius: 4 }} />
+                </div>
+                <span style={{ fontSize: 12, color: "#94a3b8", minWidth: 32 }}>{catPct}%</span>
+              </div>
+            </div>
+            {!isCollapsed && (
+              <div style={{ padding: "0 16px 12px" }}>
+                {filtered.map(task => (
+                  <div key={task.id} style={{ display: "flex", alignItems: "center", gap: 10, padding: "8px 4px", borderBottom: "1px solid #0f172a" }}>
+                    <input type="checkbox" checked={task.done} onChange={() => dispatch({ type: "TOGGLE", id: task.id })} style={{ width: 18, height: 18, accentColor: color, cursor: "pointer" }} />
+                    <span style={{ flex: 1, fontSize: 13, textDecoration: task.done ? "line-through" : "none", color: task.done ? "#475569" : "#e2e8f0" }}>
+                      {task.text}
+                      {task.verifiedInCode && <span style={{ marginRight: 6, fontSize: 10, background: "#10b981", color: "#fff", borderRadius: 4, padding: "1px 6px" }}>אומת בקוד ✓</span>}
+                      {task.note && <span style={{ marginRight: 6, fontSize: 10, background: "#f97316", color: "#fff", borderRadius: 4, padding: "1px 6px" }}>{task.note}</span>}
+                    </span>
+                    <button onClick={() => dispatch({ type: "DELETE", id: task.id })} style={{ background: "none", border: "none", color: "#475569", cursor: "pointer", fontSize: 14, padding: 4 }} onMouseOver={e => e.target.style.color = "#ef4444"} onMouseOut={e => e.target.style.color = "#475569"}>✕</button>
+                  </div>
+                ))}
+                {filtered.length === 0 && <p style={{ color: "#475569", fontSize: 13, padding: 8 }}>אין משימות {filter === "open" ? "פתוחות" : filter === "done" ? "שהושלמו" : ""} בקטגוריה</p>}
+              </div>
+            )}
+          </div>
+        );
+      })}
+
+      {/* Footer */}
+      <div style={{ textAlign: "center", padding: "24px 0 8px", color: "#475569", fontSize: 12 }}>
+        Manager Task Dashboard — עדכון אחרון: {new Date().toLocaleDateString("he-IL")}
+      </div>
+    </div>
+  );
 }
-</script>
-</body>
-</html>
