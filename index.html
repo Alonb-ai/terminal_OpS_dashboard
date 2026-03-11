@@ -361,14 +361,13 @@ body {
 <div class="container" id="app"></div>
 <script>
 // ============ CONFIG ============
-const CFG_KEY = 'manager-config';
+const CFG_KEY = 'manager-config-gist';
 const HOURS_KEY = 'manager-work-hours-v2';
-const CACHE_KEY = 'manager-sheet-cache';
+const CACHE_KEY = 'manager-gist-cache';
 
-const DEFAULT_SHEET_ID = '16xVG6xHsrilXv5I1n-jPS49ka5Dz9Cr1f1e8PDZB2SA';
-const DEFAULT_GID = '1985634719';
-const DEFAULT_PUB_KEY = '2PACX-1vTV8NzgFdxt_mjW1MzZMVCX0CHuKkjYwQsc6j8IswgO2l8K_nAYUkzDPtMIOdHZEQxZkxiHoM7cK3gU';
-const APPS_SCRIPT_URL = 'https://script.google.com/macros/s/AKfycbw6TW4jymmpX_TjyypwcKbBCFl8LbI_4Ly6Lr8kr0ZJ4LgvOBMIY-0XEnXAk_gWOy6eow/exec';
+const GIST_API = 'https://api.github.com/gists';
+const GIST_FILENAME = 'tasks.json';
+const POLL_INTERVAL = 30000; // 30 seconds
 
 const CAT_COLORS = {
   'מיידי':'#c76a6a','באגים':'#d4a853',"פיצ'רים עמר":'#9b8ec4',
@@ -377,18 +376,14 @@ const CAT_COLORS = {
 };
 
 let config = null;
+let pollTimer = null;
 let state = { tasks: {}, hours: [], filter: 'all', search: '', collapsed: {}, showHoursForm: false, showSetup: false, syncStatus: 'loading', syncError: '', lastSync: null };
 
 function loadConfig() {
   try { config = JSON.parse(localStorage.getItem(CFG_KEY)); } catch {}
-  if (!config || !config.sheetId) {
-    config = { sheetId: DEFAULT_SHEET_ID, gid: DEFAULT_GID, pubKey: DEFAULT_PUB_KEY, sheetName: '', webhookUrl: '' };
-    saveConfig();
-  }
-  if (!config.gid || !config.pubKey) {
-    config.gid = config.gid || DEFAULT_GID;
-    config.pubKey = config.pubKey || DEFAULT_PUB_KEY;
-    saveConfig();
+  if (!config || !config.gistId) {
+    config = { gistId: '', token: '' };
+    state.showSetup = true;
   }
 }
 function saveConfig() {
@@ -400,7 +395,7 @@ function loadHours() {
 function saveHours() {
   try { localStorage.setItem(HOURS_KEY, JSON.stringify(state.hours)); } catch {}
 }
-function cacheSheet(tasks) {
+function cacheData(tasks) {
   try { localStorage.setItem(CACHE_KEY, JSON.stringify({ tasks, ts: Date.now() })); } catch {}
 }
 function loadCache() {
@@ -411,152 +406,143 @@ function loadCache() {
   return false;
 }
 
-// ============ CSV PARSER ============
-function parseCSV(text) {
-  const lines = text.split('\n').filter(l => l.trim());
-  if (lines.length < 2) return [];
-  const headers = lines[0].split(',').map(h => h.trim().replace(/^\uFEFF/, ''));
-  return lines.slice(1).map(line => {
-    const vals = [];
-    let cur = '', inQ = false;
-    for (let ch of line) {
-      if (ch === '"') { inQ = !inQ; }
-      else if (ch === ',' && !inQ) { vals.push(cur.trim()); cur = ''; }
-      else { cur += ch; }
-    }
-    vals.push(cur.trim());
-    const obj = {};
-    headers.forEach((h, i) => { obj[h] = vals[i] || ''; });
-    return obj;
-  });
+function gistHeaders() {
+  const h = { 'Accept': 'application/vnd.github.v3+json' };
+  if (config?.token) h['Authorization'] = 'token ' + config.token;
+  return h;
 }
 
-function csvToTasks(rows) {
+// ============ GIST DATA HELPERS ============
+function gistToTasks(gistData) {
+  // Parse the tasks.json file from the gist
+  const file = gistData.files?.[GIST_FILENAME];
+  if (!file || !file.content) return null;
+  const data = JSON.parse(file.content);
+  if (!data.categories) return null;
+  // Convert stored format to internal UI format
   const cats = {};
-  for (const r of rows) {
-    const cat = r.category || 'אחר';
-    if (!cats[cat]) cats[cat] = { color: CAT_COLORS[cat] || '#8a8580', tasks: [] };
-    cats[cat].tasks.push({
-      id: parseInt(r.id) || Math.random() * 99999 | 0,
-      text: r.task || '',
-      done: String(r.done).toUpperCase() === 'TRUE',
-      v: String(r.verified_in_code).toUpperCase() === 'TRUE',
-      n: r.note || '',
-      est: parseFloat(r.est_hours) || 0,
-      priority: parseInt(r.priority) || 9
-    });
+  for (const [cat, info] of Object.entries(data.categories)) {
+    cats[cat] = {
+      color: info.color || CAT_COLORS[cat] || '#8a8580',
+      tasks: (info.tasks || []).map(t => ({
+        id: t.id,
+        text: t.task || t.text || '',
+        done: !!t.done,
+        v: !!t.verified_in_code,
+        n: t.note || '',
+        est: parseFloat(t.est_hours) || 0,
+        priority: parseInt(t.priority) || 9,
+        category: t.category || cat
+      }))
+    };
   }
   return cats;
 }
 
-// ============ FETCH FROM GOOGLE SHEET ============
+function tasksToGistContent(tasks) {
+  // Convert internal UI format back to stored format
+  const categories = {};
+  let total = 0, done = 0;
+  for (const [cat, info] of Object.entries(tasks)) {
+    categories[cat] = {
+      color: info.color || CAT_COLORS[cat] || '#8a8580',
+      tasks: info.tasks.map(t => ({
+        id: t.id,
+        task: t.text,
+        done: t.done,
+        category: t.category || cat,
+        priority: t.priority || 9,
+        est_hours: t.est || 0,
+        verified_in_code: t.v || false,
+        note: t.n || ''
+      }))
+    };
+    total += info.tasks.length;
+    done += info.tasks.filter(t => t.done).length;
+  }
+  return JSON.stringify({
+    synced_at: new Date().toISOString(),
+    categories,
+    summary: { total, done, remaining: total - done, percent: total > 0 ? Math.round(done / total * 100) : 0 }
+  }, null, 2);
+}
+
+// ============ FETCH FROM GITHUB GIST ============
 async function fetchSheet() {
-  if (!config || !config.sheetId) return false;
+  if (!config || !config.gistId) { state.showSetup = true; render(); return false; }
   state.syncStatus = 'loading';
   state.syncError = '';
   render();
 
-  // Strategy: Try Apps Script (real-time data), then published CSV (cached)
-  const scriptUrl = config.webhookUrl || APPS_SCRIPT_URL;
-  const pubKey = config.pubKey || DEFAULT_PUB_KEY;
-  const gid = config.gid || DEFAULT_GID;
-
-  // 1. Try Apps Script GET (real-time, follows redirect)
-  if (scriptUrl) {
-    try {
-      console.log('Reading via Apps Script...');
-      const resp = await fetch(scriptUrl + '?action=read', { redirect: 'follow' });
-      if (resp.ok) {
-        const text = await resp.text();
-        const data = JSON.parse(text);
-        if (data.rows && data.rows.length > 0) {
-          const rows = data.rows.map(r => {
-            const nr = {};
-            for (const [k, v] of Object.entries(r)) {
-              nr[k] = typeof v === 'boolean' ? (v ? 'TRUE' : 'FALSE') : String(v);
-            }
-            return nr;
-          });
-          state.tasks = csvToTasks(rows);
-          state.syncStatus = 'ok';
-          state.syncError = '';
-          state.lastSync = Date.now();
-          cacheSheet(state.tasks);
-          render();
-          return true;
-        }
-      }
-    } catch (e) {
-      console.warn('Apps Script read failed:', e.message);
-    }
+  try {
+    console.log('Reading from GitHub Gist...');
+    const resp = await fetch(`${GIST_API}/${config.gistId}`, { headers: gistHeaders() });
+    if (!resp.ok) throw new Error(`GitHub API returned ${resp.status}`);
+    const data = await resp.json();
+    const tasks = gistToTasks(data);
+    if (!tasks) throw new Error('No tasks.json file found in gist');
+    state.tasks = tasks;
+    state.syncStatus = 'ok';
+    state.syncError = '';
+    state.lastSync = Date.now();
+    cacheData(state.tasks);
+    render();
+    startPolling();
+    return true;
+  } catch (e) {
+    console.warn('Gist read failed:', e.message);
+    state.syncStatus = 'err';
+    state.syncError = `שגיאה בקריאה מ-GitHub Gist: ${e.message}`;
+    render();
+    return false;
   }
-
-  // 2. Fallback: Published CSV
-  const csvUrls = [];
-  if (pubKey) {
-    csvUrls.push(`https://docs.google.com/spreadsheets/d/e/${pubKey}/pub?gid=${gid}&single=true&output=csv`);
-  }
-  if (config.gid) {
-    csvUrls.push(`https://docs.google.com/spreadsheets/d/${config.sheetId}/gviz/tq?tqx=out:csv&gid=${config.gid}`);
-  }
-
-  for (const url of csvUrls) {
-    try {
-      console.log('Trying CSV:', url);
-      const resp = await fetch(url);
-      if (!resp.ok) continue;
-      const text = await resp.text();
-      if (text.startsWith('google.visualization') || text.startsWith('{')) continue;
-      const rows = parseCSV(text);
-      if (rows.length === 0) continue;
-      const firstRow = rows[0];
-      if (!firstRow.task && !firstRow.category && !firstRow.id) continue;
-      state.tasks = csvToTasks(rows);
-      state.syncStatus = 'ok';
-      state.syncError = '';
-      state.lastSync = Date.now();
-      cacheSheet(state.tasks);
-      render();
-      return true;
-    } catch (e) {
-      console.warn('CSV fetch failed:', url, e.message);
-    }
-  }
-
-  state.syncStatus = 'err';
-  state.syncError = 'לא הצלחתי לקרוא מהשיטס. בדוק שהשיטס מפורסם (Publish to web) ושה-Sheet ID נכון.';
-  render();
-  return false;
 }
 
-// ============ WRITE BACK VIA GOOGLE APPS SCRIPT ============
-function updateTaskInSheet(id, field, value) {
-  const url = config?.webhookUrl || APPS_SCRIPT_URL;
-  if (!url) return;
-  // Use GET via hidden image — follows redirects reliably, no CORS issues
-  const params = new URLSearchParams({ action: 'toggle', id: String(id), [field]: String(value) });
-  const img = new Image();
-  img.src = url + '?' + params.toString();
-  console.log('Write:', img.src);
+// ============ WRITE BACK TO GITHUB GIST ============
+async function updateGist() {
+  if (!config?.gistId || !config?.token) return;
+  try {
+    const resp = await fetch(`${GIST_API}/${config.gistId}`, {
+      method: 'PATCH',
+      headers: { ...gistHeaders(), 'Content-Type': 'application/json' },
+      body: JSON.stringify({
+        files: { [GIST_FILENAME]: { content: tasksToGistContent(state.tasks) } }
+      })
+    });
+    if (!resp.ok) console.warn('Gist write failed:', resp.status);
+    else { state.lastSync = Date.now(); console.log('Gist updated'); }
+  } catch (e) {
+    console.warn('Gist write error:', e.message);
+  }
 }
+
+// ============ POLLING ============
+function startPolling() {
+  if (pollTimer) clearInterval(pollTimer);
+  pollTimer = setInterval(() => {
+    if (document.visibilityState === 'visible') fetchSheet();
+  }, POLL_INTERVAL);
+}
+document.addEventListener('visibilitychange', () => {
+  if (document.visibilityState === 'visible' && config?.gistId) fetchSheet();
+});
 
 // ============ RENDER ============
 function render() {
   const app = document.getElementById('app');
 
-  if (state.showSetup || !config || !config.sheetId) {
+  if (state.showSetup || !config || !config.gistId) {
     app.innerHTML = `
     <div class="header"><h1>Manager Dashboard</h1><p>Setup</p></div>
     <div class="setup-box">
-      <h3>Google Sheet Connection</h3>
+      <h3>GitHub Gist Connection</h3>
       <p style="color:var(--text-muted);font-size:12px;margin-bottom:14px">
-        1. Open the Sheet in Extensions > Apps Script<br>
-        2. Paste the Apps Script code and Deploy as Web App<br>
-        3. Paste the Web App URL below
+        1. Create a GitHub Gist with a file named <b>tasks.json</b><br>
+        2. Generate a Personal Access Token with <b>gist</b> scope<br>
+        3. Paste the Gist ID and token below
       </p>
-      <input id="cfg-sheet" placeholder="Sheet ID (from URL: /d/XXXXXX/edit)" value="${config?.sheetId || ''}">
-      <input id="cfg-gid" placeholder="Sheet GID (from URL: #gid=XXXX)" value="${config?.gid || ''}">
-      <input id="cfg-webhook" placeholder="Apps Script Web App URL (for read+write)" value="${config?.webhookUrl || ''}">
+      <input id="cfg-gist" placeholder="Gist ID (from URL: gist.github.com/user/XXXXXX)" value="${config?.gistId || ''}" style="direction:ltr">
+      <input id="cfg-token" type="password" placeholder="GitHub Personal Access Token (for read+write)" value="${config?.token || ''}" style="direction:ltr">
       <br><button class="btn btn-success" onclick="saveSetup()" style="margin-top:10px;width:100%;padding:10px">Connect</button>
     </div>`;
     return;
@@ -583,7 +569,7 @@ function render() {
   <div class="sync-status"><span class="sync-dot ${syncClass}"></span> ${syncClass === 'ok' ? 'Synced' : syncClass === 'loading' ? 'Loading...' : 'Sync error'} &middot; ${syncTime}</div>
   <button class="btn btn-ghost btn-sm" onclick="fetchSheet()">Refresh</button>
 </div>
-${state.syncError ? `<div class="error-box">${state.syncError}<br><span style="color:var(--text-muted);font-size:10px;direction:ltr;display:block;margin-top:4px">Sheet ID: ${config?.sheetId || '?'} | GID: ${config?.gid || 'none'}</span></div>` : ''}
+${state.syncError ? `<div class="error-box">${state.syncError}<br><span style="color:var(--text-muted);font-size:10px;direction:ltr;display:block;margin-top:4px">Gist ID: ${config?.gistId || '?'}</span></div>` : ''}
 <div class="stats">
   <div class="stat"><div class="stat-val" style="color:var(--blue)">${total}</div><div class="stat-lbl">Total</div></div>
   <div class="stat"><div class="stat-val" style="color:var(--success)">${done}</div><div class="stat-lbl">Done (${pct}%)</div></div>
@@ -676,11 +662,10 @@ ${state.syncError ? `<div class="error-box">${state.syncError}<br><span style="c
 
 // ============ ACTIONS ============
 function saveSetup() {
-  const sheetId = document.getElementById('cfg-sheet').value.trim();
-  const gid = document.getElementById('cfg-gid').value.trim();
-  const webhookUrl = document.getElementById('cfg-webhook').value.trim();
-  if (!sheetId) return alert('Missing Sheet ID');
-  config = { sheetId, gid, sheetName: '', webhookUrl, pubKey: DEFAULT_PUB_KEY };
+  const gistId = document.getElementById('cfg-gist').value.trim();
+  const token = document.getElementById('cfg-token').value.trim();
+  if (!gistId) return alert('Missing Gist ID');
+  config = { gistId, token };
   state.showSetup = false;
   saveConfig();
   fetchSheet();
@@ -696,8 +681,8 @@ function toggle(id) {
     for (let t of cat.tasks) {
       if (t.id === id) {
         t.done = !t.done;
-        cacheSheet(state.tasks);
-        updateTaskInSheet(id, 'done', t.done ? 'TRUE' : 'FALSE');
+        cacheData(state.tasks);
+        updateGist();
         render();
         return;
       }
@@ -723,7 +708,7 @@ function delHours(id) { state.hours = state.hours.filter(e => e.id !== id); save
 // ============ INIT ============
 loadConfig();
 loadHours();
-if (config && config.sheetId) {
+if (config && config.gistId) {
   loadCache();
   render();
   fetchSheet();
