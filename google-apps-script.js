@@ -73,7 +73,7 @@ function readAll(sheet) {
 
 function toggleTask(sheet, params) {
   const id = parseInt(params.id);
-  const done = params.done;
+  const done = String(params.done).toUpperCase() === 'TRUE';
   if (!id) return jsonResponse({ error: 'Missing id' });
 
   const data = sheet.getDataRange().getValues();

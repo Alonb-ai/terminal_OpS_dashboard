@@ -530,14 +530,32 @@ async function fetchSheet() {
 }
 
 // ============ WRITE BACK VIA GOOGLE APPS SCRIPT ============
-function updateTaskInSheet(id, field, value) {
+async function updateTaskInSheet(id, field, value) {
   const url = config?.webhookUrl || APPS_SCRIPT_URL;
   if (!url) return;
-  // Use GET via hidden image — follows redirects reliably, no CORS issues
   const params = new URLSearchParams({ action: 'toggle', id: String(id), [field]: String(value) });
-  const img = new Image();
-  img.src = url + '?' + params.toString();
-  console.log('Write:', img.src);
+  try {
+    const resp = await fetch(url + '?' + params.toString(), { redirect: 'follow' });
+    if (!resp.ok) throw new Error('HTTP ' + resp.status);
+    const data = await resp.json().catch(() => null);
+    if (data && data.error) throw new Error(data.error);
+  } catch (e) {
+    console.error('Write failed:', e.message);
+    // Revert the local change on failure
+    for (let cat of Object.values(state.tasks)) {
+      for (let t of cat.tasks) {
+        if (t.id === id) {
+          t.done = !t.done;
+          cacheSheet(state.tasks);
+          render();
+          break;
+        }
+      }
+    }
+    state.syncStatus = 'err';
+    state.syncError = 'שמירה נכשלה: ' + e.message;
+    render();
+  }
 }
 
 // ============ RENDER ============
