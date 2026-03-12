@@ -380,6 +380,11 @@ const DEFAULT_API_KEY = 'AIzaSyCYVWc3_hOJadijX6Ebclz5VCEWthhuw8w';
 const DEFAULT_PROJECT_ID = 'manager-dashboard-b8627';
 const DEFAULT_APP_ID = '1:1062866166372:web:7d0e514cd12b357e89b571';
 
+function escapeHtml(s) {
+  if (!s) return '';
+  return String(s).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;');
+}
+
 function loadConfig() {
   try { config = JSON.parse(localStorage.getItem(CFG_KEY)); } catch {}
   if (!config || !config.databaseURL) {
@@ -506,7 +511,7 @@ function render() {
   <div class="sync-status"><span class="sync-dot ${syncClass}"></span> ${syncClass === 'ok' ? 'Synced' : syncClass === 'loading' ? 'Loading...' : 'Sync error'} &middot; ${syncTime}</div>
   <button class="btn btn-ghost btn-sm" onclick="location.reload()">Refresh</button>
 </div>
-${state.syncError ? `<div class="error-box">${state.syncError}<br><span style="color:var(--text-muted);font-size:10px;direction:ltr;display:block;margin-top:4px">DB: ${config?.databaseURL || '?'}</span></div>` : ''}
+${state.syncError ? `<div class="error-box">${escapeHtml(state.syncError)}<br><span style="color:var(--text-muted);font-size:10px;direction:ltr;display:block;margin-top:4px">DB: ${config?.databaseURL || '?'}</span></div>` : ''}
 <div class="stats">
   <div class="stat"><div class="stat-val" style="color:var(--blue)">${total}</div><div class="stat-lbl">Total</div></div>
   <div class="stat"><div class="stat-val" style="color:var(--success)">${done}</div><div class="stat-lbl">Done (${pct}%)</div></div>
@@ -534,7 +539,7 @@ ${state.syncError ? `<div class="error-box">${state.syncError}<br><span style="c
   if (state.hours.length > 0) {
     h += `<div style="max-height:180px;overflow-y:auto"><table class="hours-table"><thead><tr><th>Date</th><th style="text-align:center">Hours</th><th style="text-align:center">Location</th><th>Notes</th><th></th></tr></thead><tbody>`;
     for (let e of [...state.hours].reverse()) {
-      h += `<tr><td>${e.date}</td><td style="text-align:center;color:var(--teal);font-weight:400">${e.hours}</td><td style="text-align:center">${e.location}</td><td style="color:var(--text-secondary)">${e.notes || ''}</td><td><button class="btn" style="background:none;color:var(--danger);font-size:13px;padding:2px" onclick="delHours(${e.id})">x</button></td></tr>`;
+      h += `<tr><td>${e.date}</td><td style="text-align:center;color:var(--teal);font-weight:400">${e.hours}</td><td style="text-align:center">${e.location}</td><td style="color:var(--text-secondary)">${escapeHtml(e.notes || '')}</td><td><button class="btn" style="background:none;color:var(--danger);font-size:13px;padding:2px" onclick="delHours(${e.id})">x</button></td></tr>`;
     }
     h += `</tbody></table></div>`;
   }
@@ -585,7 +590,7 @@ ${state.syncError ? `<div class="error-box">${state.syncError}<br><span style="c
     <div class="info">
       <span class="arrow" style="transform:rotate(${isCol ? '-90' : '0'}deg)">&#9662;</span>
       <span style="width:3px;height:18px;border-radius:2px;background:${color};display:inline-block"></span>
-      <span class="name">${cat}</span>
+      <span class="name">${escapeHtml(cat)}</span>
       <span class="count">${catDone}/${tasks.length}</span>
     </div>
     <div class="cat-progress"><div class="cat-bar"><div class="cat-fill" style="width:${catPct}%;background:${color}"></div></div><span class="cat-pct">${catPct}%</span></div>
@@ -595,9 +600,9 @@ ${state.syncError ? `<div class="error-box">${state.syncError}<br><span style="c
       for (let t of filtered) {
         h += `<div class="task">
         <input type="checkbox" ${t.done ? 'checked' : ''} onchange="toggle(${t.id})">
-        <span class="task-text ${t.done ? 'done' : ''}">${t.text}`;
+        <span class="task-text ${t.done ? 'done' : ''}">${escapeHtml(t.text)}`;
         if (t.v) h += ` <span class="badge badge-green">Verified</span>`;
-        if (t.n) h += ` <span class="badge badge-orange">${t.n}</span>`;
+        if (t.n) h += ` <span class="badge badge-orange">${escapeHtml(t.n)}</span>`;
         h += `</span></div>`;
       }
       if (filtered.length === 0) h += `<p style="color:var(--text-muted);font-size:12px;padding:8px 0">No tasks</p>`;
