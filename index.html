@@ -10,17 +10,17 @@
 <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600&family=Heebo:wght@300;400;500;600&display=swap" rel="stylesheet">
 <style>
 :root {
-  --bg: #1a2035;
-  --bg-raised: #e9ecf5;
-  --bg-card: #e9ecf5;
-  --bg-card-hover: #dfe3ef;
-  --bg-input: #f2f4f9;
-  --border: rgba(0, 0, 0, 0.08);
-  --border-hover: rgba(0, 0, 0, 0.15);
+  --bg: #131620;
+  --bg-raised: #1c2033;
+  --bg-card: #1e2235;
+  --bg-card-hover: #252a40;
+  --bg-input: #161a2b;
+  --border: rgba(255, 255, 255, 0.08);
+  --border-hover: rgba(255, 255, 255, 0.14);
   --border-accent: rgba(99, 130, 237, 0.5);
-  --text: #1a1f35;
-  --text-secondary: #4a5068;
-  --text-muted: #737b95;
+  --text: #e8ecf4;
+  --text-secondary: #9ba3b8;
+  --text-muted: #6b7280;
   --accent: #6382ed;
   --accent-soft: rgba(99, 130, 237, 0.12);
   --accent-hover: rgba(99, 130, 237, 0.2);
@@ -86,7 +86,7 @@ body::before {
 .header h1 {
   font-size: 28px;
   font-weight: 600;
-  color: #edf0f7;
+  color: var(--text);
   letter-spacing: -0.3px;
 }
 .header h1 span {
@@ -95,7 +95,7 @@ body::before {
   font-weight: 500;
 }
 .header-date {
-  color: #8892ad;
+  color: var(--text-muted);
   font-size: 14px;
   font-weight: 300;
   margin-top: 4px;
@@ -776,12 +776,12 @@ body::before {
 .footer {
   text-align: center;
   padding: 28px 0;
-  color: #8892ad;
+  color: var(--text-muted);
   font-size: 12px;
   font-weight: 300;
 }
 .footer a {
-  color: #8892ad;
+  color: var(--text-muted);
   text-decoration: none;
   transition: color var(--transition);
 }
