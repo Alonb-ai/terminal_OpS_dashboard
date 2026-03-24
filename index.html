@@ -5,60 +5,59 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
 <meta name="apple-mobile-web-app-capable" content="yes">
 <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
-<meta name="theme-color" content="#0a0e17">
-<title>terminal_OpS Dashboard</title>
-<link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600&family=Heebo:wght@200;300;400;500;600&family=JetBrains+Mono:wght@300;400;500&display=swap" rel="stylesheet">
+<meta name="theme-color" content="#1e2433">
+<title>לוח משימות</title>
+<link href="https://fonts.googleapis.com/css2?family=Heebo:wght@200;300;400;500;600&family=JetBrains+Mono:wght@300;400;500&display=swap" rel="stylesheet">
 <style>
 :root {
-  --bg: #0a0e17;
-  --bg-secondary: #111827;
-  --card: rgba(17, 24, 39, 0.8);
-  --card-solid: #111827;
-  --border: rgba(56, 189, 248, 0.12);
-  --border-light: rgba(56, 189, 248, 0.06);
-  --border-hover: rgba(56, 189, 248, 0.25);
-  --text: #e2e8f0;
-  --text-secondary: #94a3b8;
-  --text-muted: #64748b;
-  --accent: #00d4ff;
-  --accent-dim: rgba(0, 212, 255, 0.15);
-  --success: #10b981;
-  --success-dim: rgba(16, 185, 129, 0.15);
-  --warning: #f59e0b;
-  --warning-dim: rgba(245, 158, 11, 0.15);
-  --danger: #ef4444;
-  --danger-dim: rgba(239, 68, 68, 0.15);
-  --purple: #8b5cf6;
-  --purple-dim: rgba(139, 92, 246, 0.15);
-  --blue: #3b82f6;
-  --blue-dim: rgba(59, 130, 246, 0.15);
-  --teal: #14b8a6;
-  --teal-dim: rgba(20, 184, 166, 0.15);
-  --pink: #ec4899;
-  --pink-dim: rgba(236, 72, 153, 0.15);
-  --shadow: 0 4px 20px rgba(0,0,0,0.3);
-  --shadow-glow: 0 0 20px rgba(0, 212, 255, 0.1);
-  --radius: 12px;
-  --radius-sm: 8px;
+  --bg: #1e2433;
+  --bg-secondary: #252d3f;
+  --card: rgba(37, 45, 63, 0.85);
+  --card-solid: #2a3347;
+  --border: rgba(148, 163, 184, 0.15);
+  --border-light: rgba(148, 163, 184, 0.08);
+  --border-hover: rgba(99, 179, 237, 0.35);
+  --text: #e8ecf4;
+  --text-secondary: #a0aec0;
+  --text-muted: #718096;
+  --accent: #63b3ed;
+  --accent-dim: rgba(99, 179, 237, 0.15);
+  --success: #68d391;
+  --success-dim: rgba(104, 211, 145, 0.15);
+  --warning: #f6ad55;
+  --warning-dim: rgba(246, 173, 85, 0.15);
+  --danger: #fc8181;
+  --danger-dim: rgba(252, 129, 129, 0.15);
+  --purple: #b794f4;
+  --purple-dim: rgba(183, 148, 244, 0.15);
+  --blue: #90cdf4;
+  --blue-dim: rgba(144, 205, 244, 0.15);
+  --teal: #81e6d9;
+  --teal-dim: rgba(129, 230, 217, 0.15);
+  --pink: #fbb6ce;
+  --pink-dim: rgba(251, 182, 206, 0.15);
+  --shadow: 0 4px 20px rgba(0,0,0,0.2);
+  --shadow-glow: 0 0 20px rgba(99, 179, 237, 0.08);
+  --radius: 14px;
+  --radius-sm: 10px;
 }
 * { margin: 0; padding: 0; box-sizing: border-box; }
 body {
-  font-family: 'Heebo', 'Inter', -apple-system, sans-serif;
+  font-family: 'Heebo', -apple-system, sans-serif;
   background: var(--bg);
   color: var(--text);
   min-height: 100vh;
   -webkit-tap-highlight-color: transparent;
   font-weight: 300;
-  line-height: 1.6;
-  position: relative;
+  line-height: 1.7;
 }
 body::before {
   content: '';
   position: fixed;
   top: 0; left: 0; right: 0; bottom: 0;
   background:
-    radial-gradient(ellipse at 20% 0%, rgba(0,212,255,0.06) 0%, transparent 50%),
-    radial-gradient(ellipse at 80% 100%, rgba(139,92,246,0.04) 0%, transparent 50%);
+    radial-gradient(ellipse at 30% 0%, rgba(99,179,237,0.05) 0%, transparent 50%),
+    radial-gradient(ellipse at 70% 100%, rgba(183,148,244,0.04) 0%, transparent 50%);
   pointer-events: none;
   z-index: 0;
 }
@@ -68,11 +67,10 @@ body::before {
 /* Header */
 .header { padding: 28px 0 20px; margin-bottom: 4px; }
 .header h1 {
-  font-size: 28px; font-weight: 300; color: var(--accent);
-  letter-spacing: 1px; text-transform: uppercase;
-  text-shadow: 0 0 30px rgba(0,212,255,0.3);
+  font-size: 26px; font-weight: 500; color: var(--text);
+  letter-spacing: 0.5px;
 }
-.header h1 span { color: var(--text-muted); font-weight: 200; }
+.header h1 span { color: var(--accent); font-weight: 400; }
 .header p { color: var(--text-muted); font-size: 13px; font-weight: 300; margin-top: 4px; }
 
 /* Sync bar */
@@ -89,17 +87,6 @@ body::before {
 .sync-dot.loading { background: var(--warning); animation: pulse 1.2s ease-in-out infinite; }
 @keyframes pulse { 0%,100%{opacity:1} 50%{opacity:.3} }
 
-/* Stats */
-.stats { display: grid; grid-template-columns: repeat(3, 1fr); gap: 10px; margin-bottom: 16px; }
-.stat {
-  background: var(--card); backdrop-filter: blur(12px);
-  border-radius: var(--radius); padding: 16px 12px; text-align: center;
-  border: 1px solid var(--border); transition: all 0.3s;
-}
-.stat:hover { border-color: var(--border-hover); box-shadow: var(--shadow-glow); }
-.stat-val { font-size: 24px; font-weight: 400; letter-spacing: -0.5px; }
-.stat-lbl { font-size: 11px; color: var(--text-muted); margin-top: 2px; font-weight: 300; text-transform: uppercase; letter-spacing: 0.5px; }
-
 /* Progress */
 .progress-wrap {
   background: var(--card); backdrop-filter: blur(12px);
@@ -107,53 +94,27 @@ body::before {
   border: 1px solid var(--border);
 }
 .progress-header { display: flex; justify-content: space-between; margin-bottom: 8px; font-size: 13px; font-weight: 400; }
-.progress-bar { background: rgba(255,255,255,0.05); border-radius: 20px; height: 6px; overflow: hidden; }
+.progress-bar { background: rgba(255,255,255,0.06); border-radius: 20px; height: 7px; overflow: hidden; }
 .progress-fill {
   height: 100%; border-radius: 20px; transition: width 0.4s ease;
   background: linear-gradient(90deg, var(--accent), var(--purple));
-  box-shadow: 0 0 12px rgba(0,212,255,0.4);
 }
 
 /* Buttons */
 .btn {
   border: none; border-radius: var(--radius-sm); padding: 8px 16px;
   cursor: pointer; font-weight: 400; font-size: 12px; font-family: inherit;
-  transition: all 0.2s; letter-spacing: 0;
+  transition: all 0.2s;
 }
-.btn-accent { background: var(--accent-dim); color: var(--accent); border: 1px solid rgba(0,212,255,0.3); }
-.btn-accent:hover { background: rgba(0,212,255,0.25); box-shadow: 0 0 12px rgba(0,212,255,0.2); }
-.btn-success { background: var(--success-dim); color: var(--success); border: 1px solid rgba(16,185,129,0.3); }
-.btn-success:hover { background: rgba(16,185,129,0.25); }
+.btn-accent { background: var(--accent-dim); color: var(--accent); border: 1px solid rgba(99,179,237,0.3); }
+.btn-accent:hover { background: rgba(99,179,237,0.25); }
+.btn-success { background: var(--success-dim); color: var(--success); border: 1px solid rgba(104,211,145,0.3); }
+.btn-success:hover { background: rgba(104,211,145,0.25); }
 .btn-ghost { background: transparent; color: var(--text-secondary); border: 1px solid var(--border); }
 .btn-ghost:hover { border-color: var(--accent); color: var(--accent); }
-.btn-danger { background: var(--danger-dim); color: var(--danger); border: 1px solid rgba(239,68,68,0.3); }
-.btn-danger:hover { background: rgba(239,68,68,0.25); }
+.btn-danger { background: var(--danger-dim); color: var(--danger); border: 1px solid rgba(252,129,129,0.3); }
+.btn-danger:hover { background: rgba(252,129,129,0.25); }
 .btn-sm { padding: 5px 12px; font-size: 11px; }
-
-/* Hours section */
-.hours-section {
-  background: var(--card); backdrop-filter: blur(12px);
-  border-radius: var(--radius); padding: 18px; margin-bottom: 16px;
-  border: 1px solid var(--border);
-}
-.hours-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 12px; }
-.hours-header h2 { font-size: 15px; font-weight: 400; color: var(--accent); }
-.hours-form { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; margin-bottom: 12px; }
-.form-group label { font-size: 11px; color: var(--text-muted); display: block; margin-bottom: 4px; font-weight: 300; text-transform: uppercase; letter-spacing: 0.5px; }
-.form-group input, .form-group select {
-  width: 100%; background: var(--bg); border: 1px solid var(--border);
-  border-radius: var(--radius-sm); padding: 8px 10px; color: var(--text);
-  font-size: 13px; font-family: inherit; font-weight: 300; transition: border-color 0.2s;
-}
-.form-group input:focus, .form-group select:focus { outline: none; border-color: var(--accent); box-shadow: 0 0 8px rgba(0,212,255,0.15); }
-.form-group select option { background: var(--bg-secondary); color: var(--text); }
-.hours-table { width: 100%; border-collapse: collapse; font-size: 12px; margin-top: 8px; }
-.hours-table th { text-align: right; padding: 6px 4px; color: var(--text-muted); border-bottom: 1px solid var(--border); font-weight: 400; }
-.hours-table td { padding: 6px 4px; font-weight: 300; }
-.hours-summary {
-  display: flex; gap: 16px; font-size: 12px; margin-top: 12px;
-  padding-top: 12px; border-top: 1px solid var(--border); flex-wrap: wrap; font-weight: 300;
-}
 
 /* Search & filters */
 .controls { display: flex; gap: 8px; margin-bottom: 16px; flex-wrap: wrap; }
@@ -162,7 +123,7 @@ body::before {
   border-radius: var(--radius-sm); padding: 9px 14px; color: var(--text);
   font-size: 13px; font-family: inherit; font-weight: 300; transition: border-color 0.2s;
 }
-.search:focus { outline: none; border-color: var(--accent); box-shadow: 0 0 8px rgba(0,212,255,0.15); }
+.search:focus { outline: none; border-color: var(--accent); }
 .search::placeholder { color: var(--text-muted); }
 .filter-btn {
   background: var(--card); color: var(--text-secondary); border: 1px solid var(--border);
@@ -176,23 +137,23 @@ body::before {
 .group {
   margin-bottom: 16px; border-radius: var(--radius);
   border: 1px solid var(--border); overflow: hidden;
-  background: rgba(17, 24, 39, 0.5); backdrop-filter: blur(12px);
+  background: rgba(37, 45, 63, 0.5); backdrop-filter: blur(12px);
   transition: border-color 0.3s, box-shadow 0.3s;
 }
-.group.drag-over { border-color: var(--accent); box-shadow: 0 0 20px rgba(0,212,255,0.15); }
+.group.drag-over { border-color: var(--accent); box-shadow: 0 0 20px rgba(99,179,237,0.12); }
 .group-header {
   display: flex; justify-content: space-between; align-items: center;
   padding: 14px 16px; cursor: pointer; transition: background 0.15s;
   border-bottom: 1px solid var(--border-light);
 }
-.group-header:hover { background: rgba(0,212,255,0.03); }
+.group-header:hover { background: rgba(99,179,237,0.03); }
 .group-title { display: flex; align-items: center; gap: 10px; }
 .group-title .arrow { font-size: 10px; transition: transform 0.2s; color: var(--text-muted); }
 .group-title .name { font-weight: 400; font-size: 15px; color: var(--text); }
 .group-title .count { font-size: 11px; color: var(--text-muted); }
 .group-progress { display: flex; align-items: center; gap: 10px; min-width: 120px; }
-.group-bar { flex: 1; height: 4px; background: rgba(255,255,255,0.05); border-radius: 2px; overflow: hidden; }
-.group-fill { height: 100%; border-radius: 2px; transition: width 0.4s; }
+.group-bar { flex: 1; height: 5px; background: rgba(255,255,255,0.06); border-radius: 3px; overflow: hidden; }
+.group-fill { height: 100%; border-radius: 3px; transition: width 0.4s; }
 .group-pct { font-size: 12px; color: var(--text-muted); min-width: 32px; text-align: left; font-weight: 400; }
 .group-actions { display: flex; gap: 4px; align-items: center; }
 .group-body { padding: 8px; }
@@ -220,7 +181,7 @@ body::before {
   border-radius: 12px; padding: 2px 8px; font-weight: 300;
 }
 .cat-progress { display: flex; align-items: center; gap: 8px; pointer-events: none; }
-.cat-bar { width: 50px; height: 3px; background: rgba(255,255,255,0.05); border-radius: 2px; overflow: hidden; }
+.cat-bar { width: 50px; height: 3px; background: rgba(255,255,255,0.06); border-radius: 2px; overflow: hidden; }
 .cat-fill { height: 100%; border-radius: 2px; }
 .cat-pct { font-size: 11px; color: var(--text-muted); min-width: 28px; text-align: left; font-weight: 300; }
 
@@ -238,7 +199,7 @@ body::before {
   flex-shrink: 0; transition: all 0.2s; position: relative; background: transparent; margin-top: 2px;
 }
 .task input[type=checkbox]:hover { border-color: var(--accent); }
-.task input[type=checkbox]:checked { background: var(--success); border-color: var(--success); box-shadow: 0 0 8px rgba(16,185,129,0.3); }
+.task input[type=checkbox]:checked { background: var(--success); border-color: var(--success); }
 .task input[type=checkbox]:checked::after {
   content: ''; position: absolute; left: 5px; top: 2px; width: 5px; height: 9px;
   border: solid #fff; border-width: 0 1.5px 1.5px 0; transform: rotate(45deg);
@@ -246,7 +207,28 @@ body::before {
 .task-content { flex: 1; min-width: 0; }
 .task-text { font-size: 13px; font-weight: 300; display: block; }
 .task-text.done { text-decoration: line-through; color: var(--text-muted); }
-.task-meta { display: flex; flex-wrap: wrap; gap: 4px; margin-top: 4px; }
+.task-meta { display: flex; flex-wrap: wrap; gap: 4px; margin-top: 4px; align-items: center; }
+
+/* Deadline */
+.deadline-tag {
+  font-size: 9px; border-radius: 4px; padding: 2px 6px;
+  white-space: nowrap; font-weight: 400; display: inline-flex; align-items: center; gap: 3px;
+}
+.deadline-ok { background: var(--accent-dim); color: var(--accent); }
+.deadline-soon { background: var(--warning-dim); color: var(--warning); }
+.deadline-overdue { background: var(--danger-dim); color: var(--danger); animation: overdue-pulse 2s ease-in-out infinite; }
+@keyframes overdue-pulse { 0%,100%{ opacity:1 } 50%{ opacity:0.7 } }
+.deadline-set {
+  font-size: 9px; border-radius: 4px; padding: 2px 6px;
+  background: transparent; border: 1px dashed var(--border);
+  color: var(--text-muted); cursor: pointer; white-space: nowrap;
+}
+.deadline-set:hover { border-color: var(--accent); color: var(--accent); }
+.deadline-input {
+  background: var(--bg); border: 1px solid var(--accent); border-radius: 4px;
+  padding: 2px 6px; color: var(--text); font-size: 11px; font-family: inherit;
+}
+.deadline-input:focus { outline: none; }
 
 /* Tags */
 .tag {
@@ -310,7 +292,16 @@ body::before {
   background: var(--bg); border: 1px solid var(--accent); border-radius: 4px;
   padding: 4px 8px; color: var(--text); font-size: 14px; font-family: inherit; font-weight: 400;
 }
-.inline-edit:focus { outline: none; box-shadow: 0 0 8px rgba(0,212,255,0.2); }
+.inline-edit:focus { outline: none; }
+
+/* Overdue alert banner */
+.overdue-banner {
+  background: var(--danger-dim); border: 1px solid rgba(252,129,129,0.3);
+  border-radius: var(--radius); padding: 12px 16px; margin-bottom: 16px;
+  font-size: 13px; color: var(--danger); font-weight: 400;
+  display: flex; align-items: center; gap: 8px;
+}
+.overdue-banner .icon { font-size: 18px; }
 
 /* Footer */
 .footer {
@@ -336,7 +327,7 @@ body::before {
 
 /* Error box */
 .error-box {
-  background: var(--danger-dim); border: 1px solid rgba(239,68,68,0.3);
+  background: var(--danger-dim); border: 1px solid rgba(252,129,129,0.3);
   border-radius: var(--radius); padding: 12px 16px; margin-bottom: 16px;
   font-size: 12px; color: var(--danger); font-weight: 300;
 }
@@ -363,8 +354,6 @@ body::before {
 ::-webkit-scrollbar-thumb:hover { background: var(--text-muted); }
 
 @media(max-width:600px) {
-  .stats { grid-template-columns: repeat(2, 1fr); }
-  .hours-form { grid-template-columns: 1fr 1fr; }
   .container { padding: 12px; }
   .group-progress { min-width: 80px; }
 }
@@ -377,25 +366,26 @@ body::before {
 <script>
 // ============ CONFIG ============
 const CFG_KEY = 'manager-config';
-const HOURS_KEY = 'manager-work-hours-v2';
+const NOTIFIED_KEY = 'manager-overdue-notified';
 
 const CAT_COLORS = {
-  'מיידי':'#ef4444','באגים':'#f59e0b',"פיצ'רים עמר":'#8b5cf6',
-  "פיצ'רים יובל לי":'#3b82f6','טווח קרוב':'#14b8a6','טווח רחוק':'#64748b',
-  'Production':'#10b981','n8n אימות':'#ec4899'
+  'מיידי':'#fc8181','באגים':'#f6ad55',"פיצ'רים עמר":'#b794f4',
+  "פיצ'רים יובל לי":'#90cdf4','טווח קרוב':'#81e6d9','טווח רחוק':'#718096',
+  'Production':'#68d391','n8n אימות':'#fbb6ce'
 };
 
 const TAG_COLORS = ['cyan','green','orange','purple','blue','pink'];
-const GROUP_COLORS = ['#00d4ff','#8b5cf6','#10b981','#f59e0b','#ec4899','#3b82f6','#ef4444','#14b8a6'];
+const GROUP_COLORS = ['#63b3ed','#b794f4','#68d391','#f6ad55','#fbb6ce','#90cdf4','#fc8181','#81e6d9'];
 
 let config = null;
 let state = {
-  tasks: {}, hours: [], filter: 'all', search: '', collapsed: {},
-  showHoursForm: false, showSetup: false, showAddTask: false,
+  tasks: {}, filter: 'all', search: '', collapsed: {},
+  showSetup: false, showAddTask: false,
   syncStatus: 'loading', syncError: '', lastSync: null,
   groups: [], groupCollapsed: {}, editingGroup: null,
   dragCat: null, dragOverGroup: null,
-  editingNote: null, addingTag: null, tagColor: 'cyan'
+  editingNote: null, addingTag: null, tagColor: 'cyan',
+  editingDeadline: null
 };
 
 const DEFAULT_DB_URL = 'https://manager-dashboard-b8627-default-rtdb.firebaseio.com';
@@ -416,8 +406,66 @@ function loadConfig() {
   }
 }
 function saveConfig() { try { localStorage.setItem(CFG_KEY, JSON.stringify(config)); } catch {} }
-function loadHours() { try { state.hours = JSON.parse(localStorage.getItem(HOURS_KEY)) || []; } catch { state.hours = []; } }
-function saveHours() { try { localStorage.setItem(HOURS_KEY, JSON.stringify(state.hours)); } catch {} }
+
+// ============ DEADLINE HELPERS ============
+function getDeadlineStatus(deadline) {
+  if (!deadline) return null;
+  const today = new Date(); today.setHours(0,0,0,0);
+  const dl = new Date(deadline); dl.setHours(0,0,0,0);
+  const diff = Math.ceil((dl - today) / 864e5);
+  if (diff < 0) return 'overdue';
+  if (diff <= 2) return 'soon';
+  return 'ok';
+}
+
+function formatDeadline(deadline) {
+  if (!deadline) return '';
+  const d = new Date(deadline);
+  return d.toLocaleDateString('he-IL', { day: 'numeric', month: 'short' });
+}
+
+function getOverdueTasks() {
+  const overdue = [];
+  for (const cat of Object.values(state.tasks)) {
+    for (const t of cat.tasks) {
+      if (!t.done && t.deadline && getDeadlineStatus(t.deadline) === 'overdue') {
+        overdue.push(t);
+      }
+    }
+  }
+  return overdue;
+}
+
+function checkOverdueAlerts() {
+  const overdue = getOverdueTasks();
+  if (overdue.length === 0) return;
+
+  // Check which ones we already notified about
+  let notified = {};
+  try { notified = JSON.parse(localStorage.getItem(NOTIFIED_KEY)) || {}; } catch {}
+
+  const newOverdue = overdue.filter(t => !notified[t.id]);
+  if (newOverdue.length > 0) {
+    // Request notification permission
+    if ('Notification' in window && Notification.permission === 'default') {
+      Notification.requestPermission();
+    }
+
+    // Show browser notification
+    if ('Notification' in window && Notification.permission === 'granted') {
+      const names = newOverdue.map(t => t.text).join(', ');
+      new Notification('⚠️ משימות באיחור!', {
+        body: `${newOverdue.length} משימות עברו את הדדליין: ${names}`,
+        icon: '⚠️',
+        tag: 'overdue-tasks'
+      });
+    }
+
+    // Mark as notified
+    newOverdue.forEach(t => { notified[t.id] = true; });
+    try { localStorage.setItem(NOTIFIED_KEY, JSON.stringify(notified)); } catch {}
+  }
+}
 
 // ============ FIREBASE ============
 let db = null;
@@ -436,6 +484,7 @@ function initFirebase() {
     state.tasks = data ? firebaseToTasks(data) : {};
     state.syncStatus = 'ok'; state.syncError = ''; state.lastSync = Date.now();
     render();
+    checkOverdueAlerts();
   }, (err) => {
     state.syncStatus = 'err'; state.syncError = err.message; render();
   });
@@ -455,12 +504,13 @@ function firebaseToTasks(data) {
   const cats = {};
   for (const [id, t] of Object.entries(data)) {
     const cat = t.category || 'אחר';
-    if (!cats[cat]) cats[cat] = { color: CAT_COLORS[cat] || '#64748b', tasks: [] };
+    if (!cats[cat]) cats[cat] = { color: CAT_COLORS[cat] || '#718096', tasks: [] };
     cats[cat].tasks.push({
       id: parseInt(id) || 0, text: t.text || '', done: !!t.done,
       v: !!t.verified, n: t.note || '', est: parseFloat(t.est) || 0,
       priority: parseInt(t.priority) || 9,
-      tags: t.tags || [], comment: t.comment || ''
+      tags: t.tags || [], comment: t.comment || '',
+      deadline: t.deadline || ''
     });
   }
   return cats;
@@ -477,7 +527,16 @@ function saveGroupsToFirebase() {
   if (!db) return;
   const groupData = {};
   state.groups.forEach(g => { groupData[g.id] = { name: g.name, color: g.color, categories: g.categories || [] }; });
-  db.ref('groups').set(groupData).catch(e => console.error('Groups save failed:', e));
+  db.ref('groups').set(groupData).catch(e => console.error('שמירת קבוצות נכשלה:', e));
+}
+
+function clearAllTasks() {
+  if (!confirm('האם למחוק את כל המשימות? פעולה זו בלתי הפיכה.')) return;
+  if (!db) return;
+  db.ref('tasks').remove().then(() => {
+    db.ref('groups').remove();
+    state.tasks = {}; state.groups = []; render();
+  }).catch(e => alert('שגיאה: ' + e.message));
 }
 
 // ============ GROUP HELPERS ============
@@ -509,60 +568,50 @@ function render() {
   const allTasks = Object.values(state.tasks).flatMap(c => c.tasks);
   const total = allTasks.length, done = allTasks.filter(t => t.done).length;
   const pct = total > 0 ? Math.round(done / total * 100) : 0;
-  const totalHours = state.hours.reduce((s, e) => s + (parseFloat(e.hours) || 0), 0);
-  const daysWorked = new Set(state.hours.map(e => e.date)).size;
-  const deadline = new Date('2026-03-31'), today = new Date();
-  const daysLeft = Math.max(0, Math.ceil((deadline - today) / 864e5));
-  const remaining = total - done;
-  const pace = daysLeft > 0 ? (remaining / daysLeft).toFixed(1) : '--';
   const syncTime = state.lastSync ? new Date(state.lastSync).toLocaleTimeString('he-IL', { hour: '2-digit', minute: '2-digit' }) : '---';
+  const overdueTasks = getOverdueTasks();
 
   let h = '';
 
   // Header
   h += `<div class="header">
-    <h1>terminal<span>_</span>OpS <span style="font-size:18px;color:var(--text-muted)">Dashboard</span></h1>
-    <p class="mono" style="font-size:11px">${daysLeft} days remaining &middot; sprint deadline 31.03</p>
+    <h1>לוח <span>משימות</span></h1>
+    <p>${new Date().toLocaleDateString('he-IL', { weekday: 'long', year: 'numeric', month: 'long', day: 'numeric' })}</p>
   </div>`;
 
   // Sync
   h += `<div class="sync-bar">
     <div class="sync-status"><span class="sync-dot ${state.syncStatus}"></span>
-    <span class="mono">${state.syncStatus === 'ok' ? 'SYNCED' : state.syncStatus === 'loading' ? 'SYNCING...' : 'ERROR'}</span>
+    <span>${state.syncStatus === 'ok' ? 'מסונכרן' : state.syncStatus === 'loading' ? 'מסנכרן...' : 'שגיאה'}</span>
     &middot; ${syncTime}</div>
-    <button class="btn btn-ghost btn-sm" onclick="location.reload()">Refresh</button>
+    <button class="btn btn-ghost btn-sm" onclick="location.reload()">רענון</button>
   </div>`;
 
   if (state.syncError) h += `<div class="error-box">${escapeHtml(state.syncError)}</div>`;
 
-  // Stats
-  h += `<div class="stats">
-    <div class="stat"><div class="stat-val mono" style="color:var(--blue)">${total}</div><div class="stat-lbl">Total</div></div>
-    <div class="stat"><div class="stat-val mono" style="color:var(--success)">${done}</div><div class="stat-lbl">Done (${pct}%)</div></div>
-    <div class="stat"><div class="stat-val mono" style="color:var(--danger)">${remaining}</div><div class="stat-lbl">Remaining</div></div>
-    <div class="stat"><div class="stat-val mono" style="color:var(--purple)">${pace}/d</div><div class="stat-lbl">Pace needed</div></div>
-    <div class="stat"><div class="stat-val mono" style="color:var(--teal)">${totalHours.toFixed(1)}</div><div class="stat-lbl">Hours</div></div>
-    <div class="stat"><div class="stat-val mono" style="color:var(--warning)">${daysWorked}</div><div class="stat-lbl">Days worked</div></div>
-  </div>`;
+  // Overdue alert banner
+  if (overdueTasks.length > 0) {
+    h += `<div class="overdue-banner">
+      <span class="icon">⚠️</span>
+      <span><b>${overdueTasks.length} משימות באיחור!</b> — ${overdueTasks.map(t => escapeHtml(t.text)).join(', ')}</span>
+    </div>`;
+  }
 
   // Overall progress
   h += `<div class="progress-wrap">
-    <div class="progress-header"><span>Overall progress</span><span class="mono" style="color:var(--accent)">${pct}%</span></div>
+    <div class="progress-header"><span>התקדמות כללית — ${done}/${total}</span><span class="mono" style="color:var(--accent)">${pct}%</span></div>
     <div class="progress-bar"><div class="progress-fill" style="width:${pct}%"></div></div>
   </div>`;
 
-  // Hours
-  h += renderHours(totalHours, daysWorked);
-  h += `<div class="divider"></div>`;
-
   // Controls
   h += `<div class="controls">
-    <input class="search" placeholder="Search tasks..." value="${escapeHtml(state.search)}" oninput="setSearch(this.value)">
-    <button class="filter-btn ${state.filter==='all'?'active':''}" onclick="setFilter('all')">All</button>
-    <button class="filter-btn ${state.filter==='open'?'active':''}" onclick="setFilter('open')">Open</button>
-    <button class="filter-btn ${state.filter==='done'?'active':''}" onclick="setFilter('done')">Done</button>
-    <button class="btn btn-ghost btn-sm" onclick="toggleAddTask()" style="margin-right:auto">+ Task</button>
-    <button class="btn btn-accent btn-sm" onclick="promptAddGroup()">+ Group</button>
+    <input class="search" placeholder="חיפוש משימות..." value="${escapeHtml(state.search)}" oninput="setSearch(this.value)">
+    <button class="filter-btn ${state.filter==='all'?'active':''}" onclick="setFilter('all')">הכל</button>
+    <button class="filter-btn ${state.filter==='open'?'active':''}" onclick="setFilter('open')">פתוחות</button>
+    <button class="filter-btn ${state.filter==='done'?'active':''}" onclick="setFilter('done')">הושלמו</button>
+    <button class="filter-btn ${state.filter==='overdue'?'active':''}" onclick="setFilter('overdue')" style="${overdueTasks.length > 0 ? 'color:var(--danger);border-color:var(--danger)' : ''}">באיחור${overdueTasks.length > 0 ? ' (' + overdueTasks.length + ')' : ''}</button>
+    <button class="btn btn-ghost btn-sm" onclick="toggleAddTask()" style="margin-right:auto">+ משימה</button>
+    <button class="btn btn-accent btn-sm" onclick="promptAddGroup()">+ קבוצה</button>
   </div>`;
 
   if (state.showAddTask) h += renderAddTaskForm();
@@ -576,8 +625,8 @@ function render() {
 
   // Footer
   h += `<div class="footer">
-    terminal_OpS Dashboard &middot; <span class="mono">${new Date().toLocaleDateString('he-IL')}</span>
-    <br><a href="#" onclick="resetConfig()">Settings</a>
+    לוח משימות &middot; <span class="mono">${new Date().toLocaleDateString('he-IL')}</span>
+    <br><a href="#" onclick="resetConfig()">הגדרות</a> &middot; <a href="#" onclick="clearAllTasks()">ניקוי כל המשימות</a>
   </div>`;
 
   app.innerHTML = h;
@@ -585,39 +634,16 @@ function render() {
 
 function renderSetup() {
   return `
-  <div class="header"><h1>terminal<span>_</span>OpS</h1><p>Setup</p></div>
+  <div class="header"><h1>לוח <span>משימות</span></h1><p>הגדרות חיבור</p></div>
   <div class="setup-box">
-    <h3>Firebase Connection</h3>
-    <p style="color:var(--text-muted);font-size:12px;margin-bottom:14px">Connect your Firebase Realtime Database</p>
+    <h3>חיבור Firebase</h3>
+    <p style="color:var(--text-muted);font-size:12px;margin-bottom:14px">חבר את מסד הנתונים שלך</p>
     <input id="cfg-dburl" placeholder="Database URL" value="${config?.databaseURL || ''}">
     <input id="cfg-apikey" placeholder="API Key" value="${config?.apiKey || ''}">
     <input id="cfg-projectid" placeholder="Project ID" value="${config?.projectId || ''}">
     <input id="cfg-appid" placeholder="App ID" value="${config?.appId || ''}">
-    <br><button class="btn btn-accent" onclick="saveSetup()" style="margin-top:10px;width:100%;padding:10px">Connect</button>
+    <br><button class="btn btn-accent" onclick="saveSetup()" style="margin-top:10px;width:100%;padding:10px">התחבר</button>
   </div>`;
-}
-
-function renderHours(totalHours, daysWorked) {
-  let h = `<div class="hours-section">
-    <div class="hours-header"><h2>Work hours</h2><button class="btn btn-ghost btn-sm" onclick="toggleHoursForm()">${state.showHoursForm ? 'Cancel' : '+ Add'}</button></div>`;
-  if (state.showHoursForm) {
-    h += `<div class="hours-form">
-      <div class="form-group"><label>Date</label><input type="date" id="h-date" value="${new Date().toISOString().split('T')[0]}"></div>
-      <div class="form-group"><label>Hours</label><input type="number" id="h-hours" step="0.5" min="0" max="16" placeholder="3.5" style="direction:ltr"></div>
-      <div class="form-group"><label>Location</label><select id="h-loc"><option>Home</option><option>Office</option><option>Field</option></select></div>
-      <div class="form-group"><label>Notes</label><input type="text" id="h-notes" placeholder="What did you work on..."></div>
-    </div><button class="btn btn-success" onclick="addHours()" style="width:100%;margin-bottom:8px">Save</button>`;
-  }
-  if (state.hours.length > 0) {
-    h += `<div style="max-height:180px;overflow-y:auto"><table class="hours-table"><thead><tr><th>Date</th><th style="text-align:center">Hours</th><th style="text-align:center">Location</th><th>Notes</th><th></th></tr></thead><tbody>`;
-    for (let e of [...state.hours].reverse()) {
-      h += `<tr><td class="mono">${e.date}</td><td style="text-align:center;color:var(--teal);font-weight:400" class="mono">${e.hours}</td><td style="text-align:center">${e.location}</td><td style="color:var(--text-secondary)">${escapeHtml(e.notes || '')}</td><td><button class="btn" style="background:none;color:var(--danger);font-size:13px;padding:2px" onclick="delHours(${e.id})">x</button></td></tr>`;
-    }
-    h += `</tbody></table></div>`;
-  }
-  const avg = daysWorked > 0 ? (totalHours / daysWorked).toFixed(1) : '0';
-  h += `<div class="hours-summary"><span>Total: <b style="color:var(--teal)" class="mono">${totalHours.toFixed(1)}h</b></span><span>Avg: <b style="color:var(--purple)" class="mono">${avg}h/day</b></span></div></div>`;
-  return h;
 }
 
 function renderAddTaskForm() {
@@ -630,9 +656,10 @@ function renderAddTaskForm() {
         <option value="__custom__">+ קטגוריה חדשה</option>
       </select>
       <input id="new-task-custom-cat" placeholder="שם קטגוריה" style="display:none;width:140px">
-      <input id="new-task-tags" placeholder="תגיות (מופרדות בפסיקים)" style="width:160px">
-      <button class="btn btn-success btn-sm" onclick="addTask()">Add</button>
-      <button class="btn btn-ghost btn-sm" onclick="toggleAddTask()">Cancel</button>
+      <input id="new-task-deadline" type="date" style="direction:ltr" title="דדליין">
+      <input id="new-task-tags" placeholder="תגיות (פסיקים)" style="width:120px">
+      <button class="btn btn-success btn-sm" onclick="addTask()">הוסף</button>
+      <button class="btn btn-ghost btn-sm" onclick="toggleAddTask()">ביטול</button>
     </div>
   </div>`;
 }
@@ -648,10 +675,10 @@ function renderGroup(g) {
     <div class="group-header" onclick="toggleGroupCollapse('${safeId}')">
       <div class="group-title">
         <span class="arrow" style="transform:rotate(${isCol?'-90':'0'}deg)">&#9662;</span>
-        <span style="width:4px;height:20px;border-radius:2px;background:${g.color};display:inline-block;box-shadow:0 0 8px ${g.color}40"></span>`;
+        <span style="width:4px;height:20px;border-radius:2px;background:${g.color};display:inline-block"></span>`;
   if (isEditing) {
     h += `<input class="inline-edit" id="edit-group-${safeId}" value="${escapeHtml(g.name)}" onclick="event.stopPropagation()" onkeydown="if(event.key==='Enter')saveGroupName('${safeId}')" style="width:150px">
-      <button class="btn btn-success btn-sm" onclick="event.stopPropagation();saveGroupName('${safeId}')">OK</button>`;
+      <button class="btn btn-success btn-sm" onclick="event.stopPropagation();saveGroupName('${safeId}')">אישור</button>`;
   } else {
     h += `<span class="name">${escapeHtml(g.name)}</span>
       <span class="count">${stats.done}/${stats.total}</span>`;
@@ -659,12 +686,12 @@ function renderGroup(g) {
   h += `</div>
       <div style="display:flex;align-items:center;gap:12px">
         <div class="group-progress">
-          <div class="group-bar"><div class="group-fill" style="width:${stats.pct}%;background:${g.color};box-shadow:0 0 8px ${g.color}60"></div></div>
+          <div class="group-bar"><div class="group-fill" style="width:${stats.pct}%;background:${g.color}"></div></div>
           <span class="group-pct mono">${stats.pct}%</span>
         </div>
         <div class="group-actions" onclick="event.stopPropagation()">
-          <button class="btn btn-ghost btn-sm" onclick="startEditGroup('${safeId}')" title="Rename">&#9998;</button>
-          <button class="btn btn-ghost btn-sm" onclick="deleteGroup('${safeId}')" title="Delete" style="color:var(--danger)">&#10005;</button>
+          <button class="btn btn-ghost btn-sm" onclick="startEditGroup('${safeId}')" title="שנה שם">&#9998;</button>
+          <button class="btn btn-ghost btn-sm" onclick="deleteGroup('${safeId}')" title="מחק" style="color:var(--danger)">&#10005;</button>
         </div>
       </div>
     </div>`;
@@ -675,7 +702,7 @@ function renderGroup(g) {
       if (state.tasks[cat]) h += renderCategory(cat, state.tasks[cat]);
     });
     if ((g.categories || []).length === 0) {
-      h += `<p style="color:var(--text-muted);font-size:12px;padding:12px;text-align:center">Drag categories here</p>`;
+      h += `<p style="color:var(--text-muted);font-size:12px;padding:12px;text-align:center">גרור קטגוריות לכאן</p>`;
     }
     h += `</div>`;
   }
@@ -693,7 +720,7 @@ function renderUngroupedSection(unassigned) {
       <div class="group-title">
         <span class="arrow" style="transform:rotate(${isCol?'-90':'0'}deg)">&#9662;</span>
         <span style="width:4px;height:20px;border-radius:2px;background:var(--text-muted);display:inline-block"></span>
-        <span class="name" style="color:var(--text-muted)">Ungrouped</span>
+        <span class="name" style="color:var(--text-muted)">ללא קבוצה</span>
         <span class="count">${stats.done}/${stats.total}</span>
       </div>
       <div class="group-progress">
@@ -715,10 +742,11 @@ function renderCategory(cat, catData) {
   const filtered = tasks.filter(t => {
     if (state.filter === 'open' && t.done) return false;
     if (state.filter === 'done' && !t.done) return false;
+    if (state.filter === 'overdue' && (t.done || !t.deadline || getDeadlineStatus(t.deadline) !== 'overdue')) return false;
     if (state.search && !t.text.includes(state.search)) return false;
     return true;
   });
-  if (filtered.length === 0 && state.search) return '';
+  if (filtered.length === 0 && (state.search || state.filter === 'overdue')) return '';
 
   const catDone = tasks.filter(t => t.done).length;
   const catPct = tasks.length > 0 ? Math.round(catDone / tasks.length * 100) : 0;
@@ -729,12 +757,12 @@ function renderCategory(cat, catData) {
     <div class="cat-header" onclick="toggleCat('${safeCat}')">
       <div class="info">
         <span class="arrow" style="transform:rotate(${isCol?'-90':'0'}deg)">&#9662;</span>
-        <span style="width:3px;height:16px;border-radius:2px;background:${color};display:inline-block;box-shadow:0 0 6px ${color}40"></span>
+        <span style="width:3px;height:16px;border-radius:2px;background:${color};display:inline-block"></span>
         <span class="name">${safeCat}</span>
         <span class="count">${catDone}/${tasks.length}</span>
       </div>
       <div class="cat-progress">
-        <div class="cat-bar"><div class="cat-fill" style="width:${catPct}%;background:${color};box-shadow:0 0 6px ${color}60"></div></div>
+        <div class="cat-bar"><div class="cat-fill" style="width:${catPct}%;background:${color}"></div></div>
         <span class="cat-pct mono">${catPct}%</span>
       </div>
     </div>`;
@@ -742,7 +770,7 @@ function renderCategory(cat, catData) {
   if (!isCol) {
     h += `<div class="task-list">`;
     for (let t of filtered) h += renderTask(t);
-    if (filtered.length === 0) h += `<p style="color:var(--text-muted);font-size:12px;padding:8px 0">No tasks</p>`;
+    if (filtered.length === 0) h += `<p style="color:var(--text-muted);font-size:12px;padding:8px 0">אין משימות</p>`;
     h += `</div>`;
   }
   h += `</div>`;
@@ -754,6 +782,8 @@ function renderTask(t) {
   const hasComment = t.comment && t.comment.trim().length > 0;
   const isEditingNote = state.editingNote === t.id;
   const isAddingTag = state.addingTag === t.id;
+  const isEditingDeadline = state.editingDeadline === t.id;
+  const dlStatus = t.done ? null : getDeadlineStatus(t.deadline);
 
   let h = `<div class="task">
     <input type="checkbox" ${t.done?'checked':''} onchange="toggle(${t.id})">
@@ -761,21 +791,32 @@ function renderTask(t) {
       <span class="task-text ${t.done?'done':''}">${escapeHtml(t.text)}</span>
       <div class="task-meta">`;
 
-  if (t.v) h += `<span class="tag tag-green">Verified</span>`;
+  // Deadline display
+  if (isEditingDeadline) {
+    h += `<input class="deadline-input" type="date" id="dl-input-${t.id}" value="${t.deadline || ''}" onchange="saveDeadline(${t.id})" onblur="state.editingDeadline=null;render()" style="direction:ltr">`;
+  } else if (t.deadline) {
+    const dlClass = dlStatus === 'overdue' ? 'deadline-overdue' : dlStatus === 'soon' ? 'deadline-soon' : 'deadline-ok';
+    const dlLabel = dlStatus === 'overdue' ? '⚠️ ' : dlStatus === 'soon' ? '⏰ ' : '📅 ';
+    h += `<span class="deadline-tag ${dlClass}" onclick="startEditDeadline(${t.id})" title="לחץ לעריכה">${dlLabel}${formatDeadline(t.deadline)}</span>`;
+  } else {
+    h += `<span class="deadline-set" onclick="startEditDeadline(${t.id})">📅 דדליין</span>`;
+  }
+
+  if (t.v) h += `<span class="tag tag-green">אומת</span>`;
   if (t.n) h += `<span class="tag tag-orange">${escapeHtml(t.n)}</span>`;
 
   tags.forEach((tag, i) => {
     const colorClass = 'tag-' + (tag.color || 'cyan');
-    h += `<span class="tag ${colorClass}" onclick="removeTag(${t.id}, ${i})" title="Click to remove">${escapeHtml(tag.text)} &#10005;</span>`;
+    h += `<span class="tag ${colorClass}" onclick="removeTag(${t.id}, ${i})" title="לחץ להסרה">${escapeHtml(tag.text)} &#10005;</span>`;
   });
 
-  h += `<span class="tag-add" onclick="startAddTag(${t.id})">+ tag</span>`;
+  h += `<span class="tag-add" onclick="startAddTag(${t.id})">+ תגית</span>`;
   h += `</div>`;
 
   // Tag input
   if (isAddingTag) {
     h += `<div class="tag-input-popup">
-      <input id="tag-input-${t.id}" placeholder="Tag text..." onkeydown="if(event.key==='Enter')saveTag(${t.id})">`;
+      <input id="tag-input-${t.id}" placeholder="טקסט תגית..." onkeydown="if(event.key==='Enter')saveTag(${t.id})">`;
     TAG_COLORS.forEach(c => {
       h += `<span class="tag-color-dot ${state.tagColor===c?'active':''}" style="background:var(--${c})" onclick="state.tagColor='${c}';render()"></span>`;
     });
@@ -787,10 +828,10 @@ function renderTask(t) {
   // Comment
   if (isEditingNote) {
     h += `<div class="note-popup">
-      <textarea id="note-input-${t.id}" placeholder="Write a comment...">${escapeHtml(t.comment || '')}</textarea>
+      <textarea id="note-input-${t.id}" placeholder="כתוב הערה...">${escapeHtml(t.comment || '')}</textarea>
       <div style="display:flex;gap:4px;margin-top:4px">
-        <button class="btn btn-success btn-sm" onclick="saveComment(${t.id})">Save</button>
-        <button class="btn btn-ghost btn-sm" onclick="state.editingNote=null;render()">Cancel</button>
+        <button class="btn btn-success btn-sm" onclick="saveComment(${t.id})">שמור</button>
+        <button class="btn btn-ghost btn-sm" onclick="state.editingNote=null;render()">ביטול</button>
       </div>
     </div>`;
   } else if (hasComment) {
@@ -798,7 +839,7 @@ function renderTask(t) {
   }
 
   h += `</div>
-    <span class="note-icon ${hasComment?'has-note':''}" onclick="startEditNote(${t.id})" title="Comment">&#128172;</span>
+    <span class="note-icon ${hasComment?'has-note':''}" onclick="startEditNote(${t.id})" title="הערה">&#128172;</span>
   </div>`;
   return h;
 }
@@ -809,7 +850,7 @@ function saveSetup() {
   const apiKey = document.getElementById('cfg-apikey').value.trim();
   const projectId = document.getElementById('cfg-projectid').value.trim();
   const appId = document.getElementById('cfg-appid').value.trim();
-  if (!databaseURL) return alert('Missing Database URL');
+  if (!databaseURL) return alert('חסר כתובת מסד נתונים');
   config = { databaseURL, apiKey, projectId, appId };
   state.showSetup = false; saveConfig(); initFirebase();
 }
@@ -826,19 +867,7 @@ function setFilter(f) { state.filter = f; render(); }
 function setSearch(v) { state.search = v; render(); }
 function toggleCat(c) { state.collapsed[c] = !state.collapsed[c]; render(); }
 function toggleGroupCollapse(id) { state.groupCollapsed[id] = !state.groupCollapsed[id]; render(); }
-function toggleHoursForm() { state.showHoursForm = !state.showHoursForm; render(); }
 function toggleAddTask() { state.showAddTask = !state.showAddTask; render(); }
-
-function addHours() {
-  const d = document.getElementById('h-date').value;
-  const hrs = document.getElementById('h-hours').value;
-  const loc = document.getElementById('h-loc').value;
-  const notes = document.getElementById('h-notes').value;
-  if (!hrs) return;
-  state.hours.push({ id: Date.now(), date: d, hours: hrs, location: loc, notes });
-  state.showHoursForm = false; saveHours(); render();
-}
-function delHours(id) { state.hours = state.hours.filter(e => e.id !== id); saveHours(); render(); }
 
 function addTask() {
   const text = document.getElementById('new-task-text').value.trim();
@@ -849,15 +878,36 @@ function addTask() {
     cat = document.getElementById('new-task-custom-cat').value.trim();
     if (!cat) return alert('הכנס שם קטגוריה');
   }
-  if (!db) return alert('Firebase not connected');
+  if (!db) return alert('Firebase לא מחובר');
 
+  const deadline = document.getElementById('new-task-deadline').value || '';
   const tagsInput = document.getElementById('new-task-tags').value.trim();
   const tags = tagsInput ? tagsInput.split(',').map((t, i) => ({ text: t.trim(), color: TAG_COLORS[i % TAG_COLORS.length] })).filter(t => t.text) : [];
 
   const id = Date.now();
-  db.ref('tasks/' + id).set({ text, done: false, verified: false, note: '', est: 0, priority: 9, category: cat, tags, comment: '' })
+  db.ref('tasks/' + id).set({ text, done: false, verified: false, note: '', est: 0, priority: 9, category: cat, tags, comment: '', deadline })
     .then(() => { state.showAddTask = false; })
-    .catch(e => alert('Error: ' + e.message));
+    .catch(e => alert('שגיאה: ' + e.message));
+}
+
+// Deadline
+function startEditDeadline(id) {
+  state.editingDeadline = id; render();
+  setTimeout(() => { const el = document.getElementById('dl-input-' + id); if (el) el.focus(); }, 50);
+}
+function saveDeadline(id) {
+  const el = document.getElementById('dl-input-' + id);
+  if (!el) return;
+  const deadline = el.value || '';
+  for (let cat of Object.values(state.tasks)) {
+    for (let t of cat.tasks) {
+      if (t.id === id) {
+        t.deadline = deadline; state.editingDeadline = null; render();
+        updateTaskInFirebase(id, { deadline });
+        return;
+      }
+    }
+  }
 }
 
 // Tags
@@ -910,7 +960,7 @@ function saveComment(id) {
 
 // Groups
 function promptAddGroup() {
-  const name = prompt('Group name:');
+  const name = prompt('שם הקבוצה:');
   if (!name || !name.trim()) return;
   const id = 'g_' + Date.now();
   const color = GROUP_COLORS[state.groups.length % GROUP_COLORS.length];
@@ -927,7 +977,7 @@ function saveGroupName(id) {
   if (g) { g.name = name; state.editingGroup = null; render(); saveGroupsToFirebase(); }
 }
 function deleteGroup(id) {
-  if (!confirm('Delete this group? Categories will move to Ungrouped.')) return;
+  if (!confirm('למחוק את הקבוצה? הקטגוריות יעברו לללא קבוצה.')) return;
   state.groups = state.groups.filter(g => g.id !== id);
   saveGroupsToFirebase();
 }
@@ -974,7 +1024,12 @@ function onDropGroup(e, groupId) {
 
 // ============ INIT ============
 loadConfig();
-loadHours();
+
+// Request notification permission on load
+if ('Notification' in window && Notification.permission === 'default') {
+  Notification.requestPermission();
+}
+
 if (config && config.databaseURL) { render(); initFirebase(); } else { render(); }
 </script>
 </body>
