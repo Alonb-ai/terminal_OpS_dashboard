@@ -5,18 +5,18 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
 <meta name="apple-mobile-web-app-capable" content="yes">
 <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
-<meta name="theme-color" content="#1a2035">
+<meta name="theme-color" content="#131a2b">
 <title>בקרה ומעקב Terminal OpS</title>
 <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600&family=Heebo:wght@300;400;500;600&display=swap" rel="stylesheet">
 <style>
 :root {
-  --bg: #1a2035;
-  --bg-raised: #222b42;
-  --bg-card: rgba(34, 43, 66, 0.85);
-  --bg-card-hover: rgba(38, 48, 74, 0.9);
-  --bg-input: #1e2840;
-  --border: rgba(100, 140, 220, 0.1);
-  --border-hover: rgba(100, 140, 220, 0.2);
+  --bg: #131a2b;
+  --bg-raised: #1e2a45;
+  --bg-card: #1e2a45;
+  --bg-card-hover: #243252;
+  --bg-input: #172137;
+  --border: rgba(100, 150, 240, 0.12);
+  --border-hover: rgba(100, 150, 240, 0.25);
   --border-accent: rgba(99, 130, 237, 0.4);
   --text: #e4e7ef;
   --text-secondary: #8b90a0;
@@ -75,6 +75,7 @@ body::before {
   padding: 24px 20px;
   position: relative;
   z-index: 1;
+  text-align: right;
 }
 
 /* ===== HEADER ===== */
@@ -245,9 +246,9 @@ body::before {
 .search::placeholder { color: var(--text-muted); }
 
 .filter-btn {
-  background: rgba(34, 43, 66, 0.6);
+  background: #243252;
   color: var(--text-muted);
-  border: 1px solid rgba(100, 140, 220, 0.15);
+  border: 1px solid rgba(100, 150, 240, 0.18);
   border-radius: 20px;
   padding: 6px 14px;
   cursor: pointer;
