@@ -5,22 +5,22 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
 <meta name="apple-mobile-web-app-capable" content="yes">
 <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
-<meta name="theme-color" content="#1a2035">
+<meta name="theme-color" content="#0f1218">
 <title>בקרה ומעקב Terminal OpS</title>
 <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600&family=Heebo:wght@300;400;500;600&display=swap" rel="stylesheet">
 <style>
 :root {
-  --bg: #131620;
-  --bg-raised: #1c2033;
-  --bg-card: #1e2235;
-  --bg-card-hover: #252a40;
-  --bg-input: #161a2b;
-  --border: rgba(255, 255, 255, 0.08);
+  --bg: #0f1218;
+  --bg-raised: #171c28;
+  --bg-card: #1a2030;
+  --bg-card-hover: #1f2640;
+  --bg-input: #141822;
+  --border: rgba(255, 255, 255, 0.07);
   --border-hover: rgba(255, 255, 255, 0.14);
   --border-accent: rgba(99, 130, 237, 0.5);
-  --text: #e8ecf4;
-  --text-secondary: #9ba3b8;
-  --text-muted: #6b7280;
+  --text: #f0f2f5;
+  --text-secondary: #a8b0c0;
+  --text-muted: #6c748a;
   --accent: #6382ed;
   --accent-soft: rgba(99, 130, 237, 0.12);
   --accent-hover: rgba(99, 130, 237, 0.2);
@@ -38,10 +38,10 @@
   --pink-soft: rgba(212, 123, 173, 0.12);
   --blue: #5ba4d4;
   --blue-soft: rgba(91, 164, 212, 0.12);
-  --radius: 12px;
+  --radius: 10px;
   --radius-sm: 8px;
   --radius-xs: 6px;
-  --shadow: 0 1px 3px rgba(0,0,0,0.2), 0 1px 2px rgba(0,0,0,0.12);
+  --shadow: 0 1px 3px rgba(0,0,0,0.3), 0 0 1px rgba(255,255,255,0.05);
   --transition: 150ms ease;
 }
 
@@ -54,8 +54,8 @@ body {
   min-height: 100vh;
   -webkit-tap-highlight-color: transparent;
   font-weight: 400;
-  font-size: 15px;
-  line-height: 1.6;
+  font-size: 14px;
+  line-height: 1.5;
   overflow-x: hidden;
 }
 
@@ -71,7 +71,7 @@ body::before {
 }
 
 .container {
-  max-width: 880px;
+  max-width: 860px;
   margin: 0 auto;
   padding: 24px 20px;
   position: relative;
@@ -84,10 +84,10 @@ body::before {
   padding: 32px 0 24px;
 }
 .header h1 {
-  font-size: 28px;
+  font-size: 26px;
   font-weight: 600;
   color: var(--text);
-  letter-spacing: -0.3px;
+  letter-spacing: -0.5px;
 }
 .header h1 span {
   color: var(--accent);
@@ -111,7 +111,7 @@ body::before {
   backdrop-filter: blur(16px);
   border-radius: var(--radius);
   margin-bottom: 16px;
-  font-size: 14px;
+  font-size: 13px;
   border: 1px solid var(--border);
 }
 .sync-status {
@@ -154,12 +154,13 @@ body::before {
   padding: 16px 18px;
   margin-bottom: 16px;
   border: 1px solid var(--border);
+  box-shadow: var(--shadow);
 }
 .progress-header {
   display: flex;
   justify-content: space-between;
   margin-bottom: 10px;
-  font-size: 15px;
+  font-size: 14px;
   font-weight: 400;
   color: var(--text-secondary);
 }
@@ -171,7 +172,7 @@ body::before {
 .progress-bar {
   background: rgba(255,255,255,0.04);
   border-radius: 20px;
-  height: 6px;
+  height: 4px;
   overflow: hidden;
 }
 .progress-fill {
@@ -238,7 +239,7 @@ body::before {
   border-radius: var(--radius-sm);
   padding: 10px 16px;
   color: var(--text);
-  font-size: 15px;
+  font-size: 14px;
   font-family: inherit;
   font-weight: 400;
   transition: border-color var(--transition);
@@ -247,22 +248,22 @@ body::before {
 .search::placeholder { color: var(--text-muted); }
 
 .filter-btn {
-  background: var(--bg-card);
-  color: var(--text-secondary);
+  background: transparent;
+  color: var(--text-muted);
   border: 1px solid var(--border);
   border-radius: 20px;
-  padding: 8px 16px;
+  padding: 7px 15px;
   cursor: pointer;
-  font-size: 14px;
+  font-size: 13px;
   font-family: inherit;
   font-weight: 400;
   transition: all var(--transition);
 }
-.filter-btn:hover { border-color: var(--border-hover); color: var(--text-secondary); }
+.filter-btn:hover { border-color: var(--border-hover); color: var(--text-secondary); background: rgba(255,255,255,0.03); }
 .filter-btn.active {
-  background: var(--accent-soft);
-  color: var(--accent);
-  border-color: rgba(99,130,237,0.3);
+  background: var(--accent);
+  color: #fff;
+  border-color: var(--accent);
 }
 
 /* ===== GROUPS ===== */
@@ -274,6 +275,7 @@ body::before {
   background: var(--bg-card);
   backdrop-filter: blur(16px);
   transition: border-color 0.3s, box-shadow 0.3s;
+  box-shadow: var(--shadow);
 }
 .group.drag-over {
   border-color: var(--border-accent);
@@ -307,7 +309,7 @@ body::before {
 }
 .group-title .name {
   font-weight: 500;
-  font-size: 16px;
+  font-size: 15px;
   color: var(--text);
 }
 .group-title .count {
@@ -333,7 +335,7 @@ body::before {
 }
 .group-bar {
   flex: 1;
-  height: 4px;
+  height: 3px;
   background: rgba(255,255,255,0.04);
   border-radius: 3px;
   overflow: hidden;
@@ -379,7 +381,7 @@ body::before {
 .group-btn-icon.danger:hover { color: var(--danger); background: var(--danger-soft); }
 
 .group-body {
-  padding: 6px 8px;
+  padding: 4px 0;
   min-height: 24px;
 }
 .group-empty {
@@ -397,29 +399,31 @@ body::before {
   gap: 10px;
   padding: 10px 12px;
   transition: all var(--transition);
-  background: var(--bg-raised);
-  border-radius: var(--radius-sm);
-  margin-bottom: 4px;
-  border: 1px solid var(--border);
+  background: transparent;
+  border-radius: 0;
+  margin-bottom: 0;
+  border: none;
+  border-bottom: 1px solid var(--border);
   cursor: grab;
 }
+.task:last-child { border-bottom: none; }
 .task:active { cursor: grabbing; }
-.task.dragging { opacity: 0.3; border-color: var(--accent); }
-.task:hover { border-color: var(--border-hover); background: var(--bg-card-hover); }
+.task.dragging { opacity: 0.3; background: rgba(99,130,237,0.05); }
+.task:hover { background: rgba(255,255,255,0.02); }
 
 /* 3-state status button */
 .status-btn {
-  width: 22px; height: 22px;
-  border-radius: var(--radius-xs);
+  width: 20px; height: 20px;
+  border-radius: 50%;
   cursor: pointer;
   flex-shrink: 0;
   transition: all var(--transition);
   position: relative;
-  margin-top: 1px;
+  margin-top: 2px;
   display: flex;
   align-items: center;
   justify-content: center;
-  font-size: 11px;
+  font-size: 10px;
   border: none;
   font-family: inherit;
   background: none;
@@ -429,29 +433,29 @@ body::before {
   color: transparent;
   background: transparent;
 }
-.status-btn.s-pending:hover { border-color: var(--text-secondary); }
+.status-btn.s-pending:hover { border-color: var(--text-secondary); background: rgba(255,255,255,0.03); }
 
 .status-btn.s-active {
-  border: 1.5px solid var(--warning);
-  background: var(--warning-soft);
-  color: var(--warning);
+  border: none;
+  background: var(--warning);
+  color: #fff;
   animation: spin-slow 2.5s linear infinite;
 }
 @keyframes spin-slow {
-  0% { box-shadow: 0 0 0 0 rgba(212,148,58,0.2); }
-  50% { box-shadow: 0 0 0 3px rgba(212,148,58,0.1); }
-  100% { box-shadow: 0 0 0 0 rgba(212,148,58,0.2); }
+  0% { box-shadow: 0 0 0 0 rgba(212,148,58,0.3); }
+  50% { box-shadow: 0 0 0 3px rgba(212,148,58,0.15); }
+  100% { box-shadow: 0 0 0 0 rgba(212,148,58,0.3); }
 }
 
 .status-btn.s-done {
-  border: 1.5px solid var(--success);
+  border: none;
   background: var(--success);
   color: #fff;
 }
 
 .task-content { flex: 1; min-width: 0; }
 .task-text {
-  font-size: 15px;
+  font-size: 14px;
   font-weight: 400;
   display: block;
   line-height: 1.5;
@@ -491,9 +495,9 @@ body::before {
 
 /* Deadlines */
 .deadline-tag {
-  font-size: 12px;
+  font-size: 11px;
   border-radius: var(--radius-xs);
-  padding: 2px 7px;
+  padding: 3px 8px;
   white-space: nowrap;
   font-weight: 500;
   display: inline-flex;
@@ -507,9 +511,9 @@ body::before {
 .deadline-overdue { background: var(--danger-soft); color: var(--danger); animation: overdue-pulse 2.5s ease-in-out infinite; }
 @keyframes overdue-pulse { 0%,100%{opacity:1} 50%{opacity:0.65} }
 .deadline-set {
-  font-size: 12px;
+  font-size: 11px;
   border-radius: var(--radius-xs);
-  padding: 2px 7px;
+  padding: 3px 8px;
   background: transparent;
   border: 1px dashed rgba(255,255,255,0.08);
   color: var(--text-muted);
@@ -530,9 +534,9 @@ body::before {
 
 /* Tags */
 .tag {
-  font-size: 12px;
-  border-radius: var(--radius-xs);
-  padding: 2px 7px;
+  font-size: 11px;
+  border-radius: 20px;
+  padding: 3px 8px;
   white-space: nowrap;
   font-weight: 500;
   cursor: pointer;
@@ -549,8 +553,8 @@ body::before {
 .tag-teal { background: var(--teal-soft); color: var(--teal); }
 
 .tag-add {
-  font-size: 12px;
-  padding: 2px 7px;
+  font-size: 11px;
+  padding: 3px 8px;
   border-radius: var(--radius-xs);
   cursor: pointer;
   background: transparent;
@@ -561,9 +565,9 @@ body::before {
 .tag-add:hover { border-color: var(--accent); color: var(--accent); }
 
 .group-tag {
-  font-size: 12px;
-  border-radius: var(--radius-xs);
-  padding: 2px 7px;
+  font-size: 11px;
+  border-radius: 20px;
+  padding: 3px 8px;
   white-space: nowrap;
   font-weight: 500;
   cursor: pointer;
@@ -676,6 +680,7 @@ body::before {
   padding: 16px;
   margin-bottom: 16px;
   backdrop-filter: blur(16px);
+  box-shadow: var(--shadow);
 }
 .add-task-form input,
 .add-task-form select {
@@ -777,7 +782,7 @@ body::before {
   text-align: center;
   padding: 28px 0;
   color: var(--text-muted);
-  font-size: 12px;
+  font-size: 11px;
   font-weight: 300;
 }
 .footer a {
@@ -797,7 +802,7 @@ body::before {
 @media (max-width: 640px) {
   .container { padding: 12px 10px; }
   .header { padding: 20px 0 16px; }
-  .header h1 { font-size: 20px; }
+  .header h1 { font-size: 20px; letter-spacing: -0.3px; }
 
   .sync-bar { padding: 8px 12px; font-size: 11px; }
   .overdue-banner { padding: 10px 12px; font-size: 12px; }
