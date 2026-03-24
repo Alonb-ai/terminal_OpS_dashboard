@@ -1251,7 +1251,6 @@ function renderGroup(g) {
   let h = `<div class="group ${state.dragOverGroup === g.id ? 'drag-over' : ''}" data-group="${sid}" data-group-id="${sid}"
     ondragover="onDragOver(event,'${sid}')" ondragleave="onDragLeave(event)" ondrop="onDrop(event,'${sid}')">
     <div class="group-header ${!isCol ? 'expanded' : ''}" onclick="toggleGroup('${sid}')">
-      <span class="group-drag-handle" draggable="true" ondragstart="onGroupDragStart(event,'${sid}')" ondragend="onGroupDragEnd(event)" onclick="event.stopPropagation()" title="גרור לשינוי סדר">⠿</span>
       <div class="group-title">
         <span class="arrow" style="transform:rotate(${isCol ? '-90' : '0'}deg)">&#9662;</span>
         <span class="group-color-bar" style="background:${g.color}"></span>`;
@@ -1273,6 +1272,7 @@ function renderGroup(g) {
       <div class="group-actions" onclick="event.stopPropagation()">
         <button class="group-btn-icon" onclick="startEditGroup('${sid}')" title="שנה שם">&#9998;</button>
         <button class="group-btn-icon danger" onclick="deleteGroup('${sid}')" title="מחק">&#10005;</button>
+        <span class="group-drag-handle" draggable="true" ondragstart="onGroupDragStart(event,'${sid}')" ondragend="onGroupDragEnd(event)" onclick="event.stopPropagation()" title="גרור לשינוי סדר">⠿</span>
       </div>
     </div>
   </div>`;
